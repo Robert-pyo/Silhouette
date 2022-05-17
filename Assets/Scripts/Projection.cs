@@ -38,7 +38,7 @@ public class Projection : MonoBehaviour
         SceneManager.MoveGameObjectToScene(_ghostObj.gameObject, _simulationScene);
         
         // PhysicsScene에서 AddForce
-        _ghostObj.Init(velocity);
+        _ghostObj.Init(velocity, true);
 
         // 라인 렌더러의 점의 개수는 프레임당 최대 반복획수 만큼
         lineRenderer.positionCount = _maxPhysicsFrameIterations;

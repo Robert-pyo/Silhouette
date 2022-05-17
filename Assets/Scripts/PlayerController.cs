@@ -106,7 +106,7 @@ namespace Player
             _projection.lineRenderer.enabled = false;
 
             var _spawned = Instantiate(_rockPrefab, _startThrowPos.position, Quaternion.identity);
-            _spawned.Init(_projectileDir);
+            _spawned.Init(_projectileDir, false);
             isThrowingSomething = false;
         }
         
