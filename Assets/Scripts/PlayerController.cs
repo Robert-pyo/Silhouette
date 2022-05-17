@@ -21,10 +21,19 @@ namespace Player
         [Range(0, 1)] public float walkSpeedReduction;
         [Range(0, 1)] public float crouchSpeedReduction;
 
-        public bool isWalking;
-        public bool isCrouching;
+        [HideInInspector] public bool isWalking;
+        [HideInInspector] public bool isCrouching;
+        [HideInInspector] public bool isThrowingReady;
+        [HideInInspector] public bool isThrowingSomething;
 
         [HideInInspector] public bool isActing;
+
+        public Transform mouseCursor;
+        [SerializeField] private Projection _projection;
+        [SerializeField] private Rock _rockPrefab;
+        [SerializeField] private float _throwForce;
+        [SerializeField] private Transform _startThrowPos;
+        private Vector3 _projectileDir;
 
         private static readonly int Velocity = Animator.StringToHash("Velocity");
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
@@ -43,6 +52,8 @@ namespace Player
             InputManager.Instance.GetPlayerInput();
             
             Move();
+            
+            ThrowSomething();
         }
 
         private void Move()
@@ -74,6 +85,29 @@ namespace Player
             if (!isCrouching) return;
 
             Agent.speed = moveSpeed * (1 - crouchSpeedReduction);
+        }
+
+        private void ThrowSomething()
+        {
+            if (isThrowingReady)
+            {
+                if (!_projection.lineRenderer.enabled)
+                    _projection.lineRenderer.enabled = true;
+
+                var _mouseDir = mouseCursor.position - transform.position;
+                _projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * _throwForce + transform.up * _throwForce;
+                _projection.SimulateTrajectory(_rockPrefab, _startThrowPos.position, _projectileDir);
+                return;
+            }
+            
+            _projection.lineRenderer.enabled = false;
+
+            if (!isThrowingSomething) return;
+            _projection.lineRenderer.enabled = false;
+
+            var _spawned = Instantiate(_rockPrefab, _startThrowPos.position, Quaternion.identity);
+            _spawned.Init(_projectileDir);
+            isThrowingSomething = false;
         }
         
         public void BlockInputToggle()

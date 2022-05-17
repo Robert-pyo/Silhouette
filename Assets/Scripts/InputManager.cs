@@ -7,6 +7,8 @@ public struct tPlayerCommand
 {
     public KeyCode playerWalk;
     public KeyCode playerCrouch;
+    public KeyCode playerThrowReady;
+    public KeyCode playerThrowSomething;
 }
 
 public class InputManager : MonoBehaviour
@@ -41,6 +43,19 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(command.playerCrouch))
         {
             GameManager.Instance.player.isCrouching = !GameManager.Instance.player.isCrouching;
+        }
+
+        if (Input.GetKeyDown(command.playerThrowReady))
+        {
+            GameManager.Instance.player.isThrowingReady = !GameManager.Instance.player.isThrowingReady;
+        }
+
+        if (Input.GetKeyDown(command.playerThrowSomething))
+        {
+            if (!GameManager.Instance.player.isThrowingReady) return;
+            
+            GameManager.Instance.player.isThrowingSomething = true;
+            GameManager.Instance.player.isThrowingReady = false;
         }
     }
 }
