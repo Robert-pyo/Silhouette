@@ -20,10 +20,18 @@ public class Projection : MonoBehaviour
             SceneManager.CreateScene("Simulation", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
         _physicsScene = _simulationScene.GetPhysicsScene();
 
-        foreach (Transform _obj in _obstaclesParent)
+        Transform[] _children = _obstaclesParent.GetComponentsInChildren<Transform>();
+
+        foreach (Transform _obj in _children)
         {
             var _ghostObj = Instantiate(_obj.gameObject, _obj.position, _obj.rotation);
-            _ghostObj.GetComponent<Renderer>().enabled = false;
+
+            Renderer _ghostObjRenderer = _ghostObj.GetComponent<Renderer>();
+            if (_ghostObjRenderer)
+            {
+                _ghostObjRenderer.enabled = false;
+            }
+            
             SceneManager.MoveGameObjectToScene(_ghostObj, _simulationScene);
         }
     }

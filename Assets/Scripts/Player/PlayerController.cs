@@ -4,8 +4,14 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-namespace Player
+public enum EInteractionType
 {
+    Item,
+    PushOrPull
+}
+
+namespace Player
+{   
     public class PlayerController : MonoBehaviour, IWalkable
     {
         public NavMeshAgent Agent { get; private set; }
@@ -24,8 +30,6 @@ namespace Player
         [Range(0, 1)] public float crouchSpeedReduction;
 
         [Header("Walk Info")]
-        [SerializeField] private Transform rightFoot;
-        [SerializeField] private Transform leftFoot;
         [SerializeField] private Transform groundChecker;
 
         [HideInInspector] public bool isWalking;
@@ -35,6 +39,15 @@ namespace Player
 
         [HideInInspector] public bool isActing;
 
+        [Header("Interaction Info")]
+        public EInteractionType interactionType;
+        public bool isInteractable;
+        public GameObject targetObj;
+        public Transform detectOrigin;
+        public float detectDistance;
+        private InteractDetectStrategy rayDetection;
+
+        [Header("Projection")]
         public Transform mouseCursor;
         [SerializeField] private Projection _projection;
         [SerializeField] private Rock _rockPrefab;
@@ -51,6 +64,7 @@ namespace Player
             m_playerAnim = GetComponentInChildren<Animator>();
 
             m_mousePointWalk = new RayPlayerWalk(this);
+            rayDetection = new RayDetector(this);
         }
 
         private void Update()
@@ -61,6 +75,13 @@ namespace Player
             Move();
             
             ThrowSomething();
+
+            isInteractable = rayDetection.CanInteract();
+            if (isInteractable && Input.GetKeyDown(KeyCode.E))
+            {
+                isActing = !isActing;
+            }
+            PushAndPull();
         }
 
         private void Move()
@@ -75,6 +96,10 @@ namespace Player
             
             m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
             m_playerAnim.SetBool(IsCrouching, isCrouching);
+
+            // var _vInput = Input.GetAxis("Vertical");
+            // var _moveDir = transform.forward * _vInput;
+            // Agent.Move(_moveDir * (Agent.speed * Time.deltaTime));
 
             if (!Input.GetButtonDown("Fire2")) return;
             m_mousePointWalk.Move();
@@ -126,11 +151,31 @@ namespace Player
         public void GenerateWalkSoundWave()
         {
             // 걸을 때 음파 생성
-            if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, 10, LayerMask.GetMask("Ground")))
+            if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, float.MaxValue, LayerMask.GetMask("Ground")))
             {
                 SoundWaveManager.Instance.GenerateSoundWave(
                     _hit.transform, _hit.point, Vector3.zero, Agent.speed);
             }
+        }
+
+        private void PushAndPull()
+        {
+            if (!isInteractable) return;
+            if (interactionType != EInteractionType.PushOrPull) return;
+            if (!isActing) return;
+
+            //m_playerAnim.SetBool("IsPushAction", true);
+            isActing = true;
+
+            var _vInput = Input.GetAxis("Vertical");
+            var _moveDir = transform.forward * _vInput;
+
+            Agent.isStopped = true;
+            Agent.ResetPath();
+            Agent.isStopped = false;
+
+            targetObj.transform.Translate(_moveDir * (Agent.speed * Time.deltaTime));
+            Agent.Move(_moveDir * (Agent.speed * Time.deltaTime));
         }
 
         // public void IndicateDestination(Vector3 target, Transform targetObject)
