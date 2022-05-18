@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IWalkable
     {
         public NavMeshAgent Agent { get; private set; }
         [Space(10f)]
@@ -26,6 +26,7 @@ namespace Player
         [Header("Walk Info")]
         [SerializeField] private Transform rightFoot;
         [SerializeField] private Transform leftFoot;
+        [SerializeField] private Transform groundChecker;
 
         [HideInInspector] public bool isWalking;
         [HideInInspector] public bool isCrouching;
@@ -122,11 +123,14 @@ namespace Player
             Agent.isStopped = !Agent.isStopped;
         }
 
-        public void GenerateWalkFx()
+        public void GenerateWalkSoundWave()
         {
             // 걸을 때 음파 생성
-            print(Agent.navMeshOwner);
-            //SoundWaveManager.Instance.GenerateSoundWave();
+            if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, 10, LayerMask.GetMask("Ground")))
+            {
+                SoundWaveManager.Instance.GenerateSoundWave(
+                    _hit.transform, _hit.point, Vector3.zero, Agent.speed);
+            }
         }
 
         // public void IndicateDestination(Vector3 target, Transform targetObject)
