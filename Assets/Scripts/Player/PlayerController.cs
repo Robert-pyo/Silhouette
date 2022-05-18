@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -45,6 +46,7 @@ namespace Player
         public GameObject targetObj;
         public Transform detectOrigin;
         public float detectDistance;
+        private Obstacles m_interactionObstacle;
         private InteractDetectStrategy rayDetection;
 
         [Header("Projection")]
@@ -57,6 +59,8 @@ namespace Player
 
         private static readonly int Velocity = Animator.StringToHash("Velocity");
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
+        private static readonly int OnPushAction = Animator.StringToHash("OnPushAction");
+        private static readonly int OnPush = Animator.StringToHash("OnPush");
 
         private void Awake()
         {
@@ -75,6 +79,9 @@ namespace Player
             Move();
             
             ThrowSomething();
+            
+            //Interaction
+            Climb();
 
             isInteractable = rayDetection.CanInteract();
             if (isInteractable && Input.GetKeyDown(KeyCode.E))
@@ -96,10 +103,6 @@ namespace Player
             
             m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
             m_playerAnim.SetBool(IsCrouching, isCrouching);
-
-            // var _vInput = Input.GetAxis("Vertical");
-            // var _moveDir = transform.forward * _vInput;
-            // Agent.Move(_moveDir * (Agent.speed * Time.deltaTime));
 
             if (!Input.GetButtonDown("Fire2")) return;
             m_mousePointWalk.Move();
@@ -160,12 +163,23 @@ namespace Player
 
         private void PushAndPull()
         {
-            if (!isInteractable) return;
+            if (!isInteractable)
+            {
+                ResetInteractionStatus();
+                return;
+            }
             if (interactionType != EInteractionType.PushOrPull) return;
-            if (!isActing) return;
+            if (!isActing)
+            {
+                m_playerAnim.SetBool(OnPushAction, isActing);
+                return;
+            }
 
-            //m_playerAnim.SetBool("IsPushAction", true);
-            isActing = true;
+            if (!m_playerAnim.GetBool(OnPushAction))
+            {
+                m_playerAnim.SetTrigger(OnPush);
+                m_playerAnim.SetBool(OnPushAction, isActing);
+            }
 
             var _vInput = Input.GetAxis("Vertical");
             var _moveDir = transform.forward * _vInput;
@@ -174,8 +188,46 @@ namespace Player
             Agent.ResetPath();
             Agent.isStopped = false;
 
-            targetObj.transform.Translate(_moveDir * (Agent.speed * Time.deltaTime));
-            Agent.Move(_moveDir * (Agent.speed * Time.deltaTime));
+            targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+            Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+            m_playerAnim.SetFloat(Velocity, _vInput * moveSpeed);
+        }
+
+        private void Climb()
+        {
+            if (!isInteractable)
+            {
+                ResetInteractionStatus();
+                return;
+            }
+            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            m_interactionObstacle = targetObj.GetComponent<Obstacles>();
+            if (m_interactionObstacle.obstacleType != EObstacleType.Climbable) return;
+            
+            // 목적지 초기화
+            Agent.ResetPath();
+
+            // Test
+            Transform _targetWay = m_interactionObstacle.fourWayToClimb[0];
+            float _closestDist = float.MaxValue;
+            foreach (Transform _way in m_interactionObstacle.fourWayToClimb)
+            {
+                var _sqrDist = (_way.position - transform.position).sqrMagnitude;
+                if (!(_closestDist > _sqrDist)) continue;
+                _closestDist = _sqrDist;
+                _targetWay = _way;
+            }
+            
+            //Debug.Log(_targetWay.position - transform.position);
+            Agent.Move(_targetWay.position - transform.position);
+        }
+
+        private void ResetInteractionStatus()
+        {
+            if (!targetObj && !m_interactionObstacle) return;
+            
+            targetObj = null;
+            m_interactionObstacle = null;
         }
 
         // public void IndicateDestination(Vector3 target, Transform targetObject)
