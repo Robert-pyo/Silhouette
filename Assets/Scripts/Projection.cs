@@ -40,7 +40,7 @@ public class Projection : MonoBehaviour
         // PhysicsScene에서 AddForce
         _ghostObj.Init(velocity, true);
 
-        // 라인 렌더러의 점의 개수는 프레임당 최대 반복획수 만큼
+        // 라인 렌더러의 점의 개수는 프레임당 최대 반복횟수 만큼
         lineRenderer.positionCount = _maxPhysicsFrameIterations;
 
         // Time.fixedDeltaTime마다 시뮬레이션 해주고 궤적을 표현해줄

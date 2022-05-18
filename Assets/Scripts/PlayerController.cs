@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace Player
 {
@@ -20,6 +22,10 @@ namespace Player
         public float MoveSpeed => moveSpeed;
         [Range(0, 1)] public float walkSpeedReduction;
         [Range(0, 1)] public float crouchSpeedReduction;
+
+        [Header("Walk Info")]
+        [SerializeField] private Transform rightFoot;
+        [SerializeField] private Transform leftFoot;
 
         [HideInInspector] public bool isWalking;
         [HideInInspector] public bool isCrouching;
@@ -114,6 +120,13 @@ namespace Player
         {
             isActing = !isActing;
             Agent.isStopped = !Agent.isStopped;
+        }
+
+        public void GenerateWalkFx()
+        {
+            // 걸을 때 음파 생성
+            print(Agent.navMeshOwner);
+            //SoundWaveManager.Instance.GenerateSoundWave();
         }
 
         // public void IndicateDestination(Vector3 target, Transform targetObject)

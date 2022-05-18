@@ -26,7 +26,13 @@ public class SoundWaveManager : MonoBehaviour
 
     public void GenerateSoundWave(Transform generator, Vector3 hitPos, Vector3 hitDir, float powerSize)
     {
+        if (powerSize > 30)
+        {
+            powerSize = 30;
+        }
         
+        ParticleSystem.MainModule _particleMain = m_soundWaveFx.main;
+        _particleMain.startSize = powerSize;
 
         var _obj = Instantiate(soundWave, hitPos, Quaternion.Euler(hitDir));
         _obj.transform.parent = generator;

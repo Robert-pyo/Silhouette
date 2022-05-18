@@ -27,7 +27,7 @@ public class Rock : MonoBehaviour
             // 부딪힐 때의 현재 rigidbody의 velocity 크기만큼 power 설정
             if (m_isGhost) return;
 
-            print(other.GetContact(0).point);
+            //print(other.GetContact(0).point);
             SoundWaveManager.Instance.GenerateSoundWave(
                 other.transform, other.GetContact(0).point, other.GetContact(0).normal, _rigidbody.velocity.sqrMagnitude);
         }
