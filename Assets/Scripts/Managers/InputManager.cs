@@ -7,6 +7,8 @@ public struct tPlayerCommand
 {
     public KeyCode playerWalk;
     public KeyCode playerCrouch;
+    public KeyCode playerInteraction;
+    public KeyCode playerClimb;
     public KeyCode playerThrowReady;
     public KeyCode playerThrowSomething;
 }
@@ -19,6 +21,11 @@ public class InputManager : MonoBehaviour
     public tPlayerCommand command;
 
     public Camera baseCamera;
+
+    // 플레이어 입력 이벤트
+    public UnityAction onStartObjDrag;
+    public UnityAction onEndObjDrag;
+    public UnityAction onClimbing;
 
     private void Awake()
     {
@@ -56,6 +63,33 @@ public class InputManager : MonoBehaviour
             
             GameManager.Instance.player.isThrowingSomething = true;
             GameManager.Instance.player.isThrowingReady = false;
+        }
+    }
+
+    public void GetPlayerInteractionInput()
+    {
+        if (!GameManager.Instance.player.isInteractable) return;
+
+        if (Input.GetKeyDown(command.playerInteraction))
+        {
+            GameManager.Instance.player.isActing = !GameManager.Instance.player.isActing;
+
+            switch (GameManager.Instance.player.interactionType)
+            {
+                case EInteractionType.PushOrPull:
+                {
+                    if (!GameManager.Instance.player.isActing)
+                    {
+                        onEndObjDrag?.Invoke();
+                        break;
+                    }
+                    onStartObjDrag?.Invoke();
+                }
+                break;
+
+                case EInteractionType.Item:
+                break;
+            }
         }
     }
 }

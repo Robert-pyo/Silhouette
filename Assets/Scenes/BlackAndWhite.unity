@@ -1283,12 +1283,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: 0
-  m_StartPoint: {x: -2.66, y: -0.67, z: 0}
-  m_EndPoint: {x: 0, y: 1, z: 0}
-  m_Width: 0
+  m_StartPoint: {x: 0, y: 0.77, z: 1}
+  m_EndPoint: {x: 0, y: -0.34, z: 3.46}
+  m_Width: 1
   m_CostModifier: -1
   m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
+  m_AutoUpdatePosition: 1
   m_Area: 0
 --- !u!1 &1123540887
 GameObject:
@@ -1363,6 +1363,7 @@ GameObject:
   - component: {fileID: 1419795171}
   - component: {fileID: 1419795174}
   - component: {fileID: 1419795175}
+  - component: {fileID: 1419795173}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1409,12 +1410,13 @@ MonoBehaviour:
   isCrouching: 0
   isThrowingReady: 0
   isThrowingSomething: 0
+  isClimbing: 0
   isActing: 0
   interactionType: 0
   isInteractable: 0
   targetObj: {fileID: 0}
   detectOrigin: {fileID: 1123540888}
-  detectDistance: 2
+  detectDistance: 3
   mouseCursor: {fileID: 761484863}
   _projection: {fileID: 1419795174}
   _rockPrefab: {fileID: 4785313128945938067, guid: 785047fb7ce7ed44b87da377996b6fe5, type: 3}
@@ -1435,13 +1437,26 @@ NavMeshAgent:
   avoidancePriority: 50
   m_AngularSpeed: 1000
   m_StoppingDistance: 0.01
-  m_AutoTraverseOffMeshLink: 1
+  m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.85
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1419795173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419795169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff8f6dc035e8566449986d24aab0338c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  method: 2
 --- !u!114 &1419795174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1909,7 +1924,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1742190419}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.172, y: 0.579, z: 3.97}
+  m_LocalPosition: {x: 21.5, y: 0.579, z: 3.97}
   m_LocalScale: {x: 3.4936, y: 1, z: 3.342}
   m_Children:
   - {fileID: 1034879279}
@@ -1974,11 +1989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   obstacleType: 0
   mass: 3
-  fourWayToClimb:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  m_navMeshLink: {fileID: 1034879280}
 --- !u!1 &1770542615
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,6 +2116,8 @@ MonoBehaviour:
   command:
     playerWalk: 304
     playerCrouch: 99
+    playerInteraction: 101
+    playerClimb: 32
     playerThrowReady: 103
     playerThrowSomething: 323
   baseCamera: {fileID: 963194227}

@@ -12,7 +12,8 @@ public enum EInteractionType
 }
 
 namespace Player
-{   
+{
+    [RequireComponent(typeof(NavMeshAgent), typeof(AgentLinkMover))]
     public class PlayerController : MonoBehaviour, IWalkable
     {
         public NavMeshAgent Agent { get; private set; }
@@ -23,6 +24,7 @@ namespace Player
         private MoveStrategy m_mousePointWalk;
 
         private Animator m_playerAnim;
+        private AgentLinkMover m_linkMover;
 
         [Header("Player Info"), SerializeField]
         private float moveSpeed;
@@ -37,6 +39,7 @@ namespace Player
         [HideInInspector] public bool isCrouching;
         [HideInInspector] public bool isThrowingReady;
         [HideInInspector] public bool isThrowingSomething;
+        [HideInInspector] public bool isClimbing;
 
         [HideInInspector] public bool isActing;
 
@@ -61,14 +64,19 @@ namespace Player
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
         private static readonly int OnPushAction = Animator.StringToHash("OnPushAction");
         private static readonly int OnPush = Animator.StringToHash("OnPush");
+        private static readonly int OnClimbing = Animator.StringToHash("OnClimbing");
 
         private void Awake()
         {
             Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
+            m_linkMover = GetComponent<AgentLinkMover>();
 
             m_mousePointWalk = new RayPlayerWalk(this);
             rayDetection = new RayDetector(this);
+
+            m_linkMover.onLinkStart += Jump;
+            //m_linkMover.onLinkEnd += Landed;
         }
 
         private void Update()
@@ -81,13 +89,8 @@ namespace Player
             ThrowSomething();
             
             //Interaction
-            Climb();
-
             isInteractable = rayDetection.CanInteract();
-            if (isInteractable && Input.GetKeyDown(KeyCode.E))
-            {
-                isActing = !isActing;
-            }
+            InputManager.Instance.GetPlayerInteractionInput();
             PushAndPull();
         }
 
@@ -193,33 +196,17 @@ namespace Player
             m_playerAnim.SetFloat(Velocity, _vInput * moveSpeed);
         }
 
-        private void Climb()
+        private void Jump()
         {
-            if (!isInteractable)
-            {
-                ResetInteractionStatus();
-                return;
-            }
-            if (!Input.GetKeyDown(KeyCode.Space)) return;
-            m_interactionObstacle = targetObj.GetComponent<Obstacles>();
-            if (m_interactionObstacle.obstacleType != EObstacleType.Climbable) return;
-            
-            // 목적지 초기화
-            Agent.ResetPath();
+            // if (!isInteractable)
+            // {
+            //     ResetInteractionStatus();
+            //     return;
+            // }
+            // m_interactionObstacle = targetObj.GetComponent<Obstacles>();
+            // if (m_interactionObstacle.obstacleType != EObstacleType.Climbable) return;
 
-            // Test
-            Transform _targetWay = m_interactionObstacle.fourWayToClimb[0];
-            float _closestDist = float.MaxValue;
-            foreach (Transform _way in m_interactionObstacle.fourWayToClimb)
-            {
-                var _sqrDist = (_way.position - transform.position).sqrMagnitude;
-                if (!(_closestDist > _sqrDist)) continue;
-                _closestDist = _sqrDist;
-                _targetWay = _way;
-            }
-            
-            //Debug.Log(_targetWay.position - transform.position);
-            Agent.Move(_targetWay.position - transform.position);
+            m_playerAnim.SetTrigger(OnClimbing);
         }
 
         private void ResetInteractionStatus()

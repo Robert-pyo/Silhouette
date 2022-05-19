@@ -17,9 +17,6 @@ public abstract class Obstacles : MonoBehaviour
 
     [Header("Info")]
     public float mass;
-    
-    [Header("Climb Info")]
-    public Transform[] fourWayToClimb;
 
     protected Rigidbody obstacleRigidbody;
 }
