@@ -29,7 +29,7 @@ public class PlayerInput : MonoBehaviour
     private RaycastHit m_mouseHit;
     private bool m_isMouseClickedGround;
 
-    private tPlayerCommand m_command;
+    public tPlayerCommand m_command;
     
     // 플레이어 움직임 관련 입력
     private bool m_walk;
@@ -39,6 +39,7 @@ public class PlayerInput : MonoBehaviour
 
     // 상호작용 입력
     private bool m_interaction;
+    private float m_vInput;
 
     // getter / setter
     public RaycastHit MouseHit
@@ -96,6 +97,17 @@ public class PlayerInput : MonoBehaviour
     {
         get { return m_interaction && !playerControllerInputBlocked; }
     }
+
+    public float VInput
+    {
+        get
+        {
+            if (playerControllerInputBlocked)
+                return 0;
+            
+            return m_vInput;
+        }
+    }
     
 
     private void Awake()
@@ -120,17 +132,33 @@ public class PlayerInput : MonoBehaviour
     private void Update()
     {
         CalcMouseHit();
+
+        if (Input.GetKeyDown(m_command.playerWalk))
+        {
+            m_walk = !m_walk;
+        }
+        if (Input.GetKeyDown(m_command.playerCrouch))
+        {
+            m_crouch = !m_crouch;
+        }
+
+        if (Input.GetKeyDown(m_command.playerThrowReady))
+        {
+            m_throwReady = !m_throwReady;
+        }
         
-        m_walk = Input.GetKeyDown(m_command.playerWalk);
-        m_crouch = Input.GetKeyDown(m_command.playerCrouch);
-        m_throwReady = Input.GetKeyDown(m_command.playerThrowReady);
         m_throwSomething = Input.GetKeyDown(m_command.playerThrowSomething);
+        if (m_throwReady && m_throwSomething) m_throwReady = false;
         
         m_interaction = Input.GetKeyDown(m_command.playerInteraction);
+
+        m_vInput = Input.GetAxis("Vertical");
     }
 
     private void CalcMouseHit()
     {
+        if (!Input.GetButtonDown("Fire2")) return;
+        
         Ray _ray = m_camera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(_ray, out var _hit, Mathf.Infinity, LayerMask.GetMask("Ground")))

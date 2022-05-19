@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using UnityEditor.Rendering;
+using MonsterLove.StateMachine;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -13,7 +13,12 @@ public enum EInteractionType
 
 public enum EPlayerState
 {
-    
+    Idle,
+    Run,
+    Crouch,
+    PushAndPull,
+    Throwing,
+    Jump,
 }
 
 namespace Player
@@ -21,6 +26,9 @@ namespace Player
     [RequireComponent(typeof(NavMeshAgent), typeof(AgentLinkMover))]
     public class PlayerController : MonoBehaviour, IWalkable
     {
+        private StateMachine<EPlayerState> m_playerSM;
+
+        private PlayerInput m_input;
         public NavMeshAgent Agent { get; private set; }
 
         private MoveStrategy m_mousePointWalk;
@@ -36,13 +44,7 @@ namespace Player
 
         [Header("Walk Info")]
         [SerializeField] private Transform groundChecker;
-
-        [HideInInspector] public bool isWalking;
-        [HideInInspector] public bool isCrouching;
-        [HideInInspector] public bool isThrowingReady;
-        [HideInInspector] public bool isThrowingSomething;
-        [HideInInspector] public bool isClimbing;
-
+        
         [HideInInspector] public bool isActing;
 
         [Header("Interaction Info")]
@@ -66,10 +68,14 @@ namespace Player
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
         private static readonly int OnPushAction = Animator.StringToHash("OnPushAction");
         private static readonly int OnPush = Animator.StringToHash("OnPush");
-        private static readonly int OnClimbing = Animator.StringToHash("OnClimbing");
+        private static readonly int OnJump = Animator.StringToHash("OnJump");
 
         private void Awake()
         {
+            m_playerSM = StateMachine<EPlayerState>.Initialize(this);
+
+            m_input = PlayerInput.Instance;
+            
             Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
             m_linkMover = GetComponent<AgentLinkMover>();
@@ -79,57 +85,118 @@ namespace Player
 
             m_linkMover.onLinkStart += Jump;
             //m_linkMover.onLinkEnd += Landed;
+            
+            m_playerSM.ChangeState(EPlayerState.Idle);
         }
 
         private void Update()
         {
-            // 기타 움직임 입력
-            InputManager.Instance.GetPlayerInput();
-            
-            Move();
-            
-            ThrowSomething();
-            
             //Interaction
             isInteractable = rayDetection.CanInteract();
-            InputManager.Instance.GetPlayerInteractionInput();
-            PushAndPull();
+            
+            if (isActing) return;
+            Move();
+            ThrowSomething();
+        }
+        
+        #region States
+        private void Idle_Update()
+        {
+            if (isInteractable && m_input.InteractionInput && interactionType == EInteractionType.PushOrPull)
+            {
+                m_playerAnim.SetTrigger(OnPush);
+                m_playerAnim.SetBool(OnPushAction, true);
+                m_playerSM.ChangeState(EPlayerState.PushAndPull);
+            }
+
+            if (m_input.CrouchInput)
+            {
+                m_playerAnim.SetBool(IsCrouching, true);
+                m_playerSM.ChangeState(EPlayerState.Crouch);
+                Debug.Log("Change to crouch");
+            }
+            
+            if (Agent.velocity.sqrMagnitude < 0.01f) return;
+            
+            m_playerSM.ChangeState(EPlayerState.Run);
         }
 
-        private void Move()
+        private void Run_Update()
         {
-            if (!isWalking && !isCrouching)
+            m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
+
+            // 걸음 속도 초기화
+            if (!m_input.WalkInput)
             {
                 Agent.speed = moveSpeed;
             }
             
-            Walk();
-            Crouch();
+            if (Agent.velocity.sqrMagnitude < 0.01f)
+                m_playerSM.ChangeState(EPlayerState.Idle);
+
+            if (m_input.WalkInput)
+            {
+                Agent.speed = moveSpeed * (1 - walkSpeedReduction);
+            }
+
+            if (!m_input.CrouchInput) return;
             
-            m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
-            m_playerAnim.SetBool(IsCrouching, isCrouching);
-
-            if (!Input.GetButtonDown("Fire2")) return;
-            m_mousePointWalk.Move();
+            m_playerAnim.SetBool(IsCrouching, true);
+            m_playerSM.ChangeState(EPlayerState.Crouch);
         }
 
-        private void Walk()
+        private void Crouch_Enter()
         {
-            if (!isWalking) return;
-
-            Agent.speed = moveSpeed * (1 - walkSpeedReduction);
-        }
-
-        private void Crouch()
-        {
-            if (!isCrouching) return;
-
             Agent.speed = moveSpeed * (1 - crouchSpeedReduction);
+        }
+
+        private void Crouch_Update()
+        {
+            m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
+
+            if (m_input.CrouchInput) return;
+
+            m_playerSM.ChangeState(Agent.velocity.sqrMagnitude > 0.01f ? EPlayerState.Run : EPlayerState.Idle);
+        }
+
+        private void Crouch_Exit()
+        {
+            Agent.speed = moveSpeed;
+            m_playerAnim.SetBool(IsCrouching, false);
+        }
+
+        private void PushAndPull_Enter()
+        {
+            Agent.ResetPath();
+            isActing = true;
+        }
+
+        private void PushAndPull_Update()
+        {
+            PushAndPull();
+
+            if (!m_input.InteractionInput) return;
+            m_playerAnim.SetBool(OnPushAction, false);
+            m_playerSM.ChangeState(EPlayerState.Idle);
+        }
+
+        private void PushAndPull_Exit()
+        {
+            isActing = false;
+        }
+
+        #endregion
+
+        
+        private void Move()
+        {
+            if (!m_input.MouseInput) return;
+            m_mousePointWalk.Move();
         }
 
         private void ThrowSomething()
         {
-            if (isThrowingReady)
+            if (m_input.ReadyToThrowInput)
             {
                 if (!_projection.lineRenderer.enabled)
                     _projection.lineRenderer.enabled = true;
@@ -141,13 +208,12 @@ namespace Player
             }
             
             _projection.lineRenderer.enabled = false;
-
-            if (!isThrowingSomething) return;
+            
+            if (!m_input.ReadyToThrowInput && !m_input.ThrowInput) return;
             _projection.lineRenderer.enabled = false;
 
             var _spawned = Instantiate(_rockPrefab, _startThrowPos.position, Quaternion.identity);
             _spawned.Init(_projectileDir, false);
-            isThrowingSomething = false;
         }
         
         public void BlockInputToggle()
@@ -168,26 +234,7 @@ namespace Player
 
         private void PushAndPull()
         {
-            if (!isInteractable)
-            {
-                ResetInteractionStatus();
-                return;
-            }
-            if (interactionType != EInteractionType.PushOrPull) return;
-            if (!isActing)
-            {
-                m_playerAnim.SetBool(OnPushAction, isActing);
-                return;
-            }
-
-            if (!m_playerAnim.GetBool(OnPushAction))
-            {
-                m_playerAnim.SetTrigger(OnPush);
-                m_playerAnim.SetBool(OnPushAction, isActing);
-            }
-
-            var _vInput = Input.GetAxis("Vertical");
-            var _moveDir = transform.forward * _vInput;
+            var _moveDir = transform.forward * m_input.VInput;
 
             Agent.isStopped = true;
             Agent.ResetPath();
@@ -195,7 +242,7 @@ namespace Player
 
             targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            m_playerAnim.SetFloat(Velocity, _vInput * moveSpeed);
+            m_playerAnim.SetFloat(Velocity, m_input.VInput * moveSpeed);
         }
 
         private void Jump()
@@ -208,7 +255,7 @@ namespace Player
             // m_interactionObstacle = targetObj.GetComponent<Obstacles>();
             // if (m_interactionObstacle.obstacleType != EObstacleType.Climbable) return;
 
-            m_playerAnim.SetTrigger(OnClimbing);
+            m_playerAnim.SetTrigger(OnJump);
         }
 
         private void ResetInteractionStatus()
