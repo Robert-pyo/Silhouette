@@ -23,13 +23,11 @@ namespace Player
         private void Walk()
         {
             if (m_controller.isActing) return;
-
-            var _ray = m_controller.playerCam.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(_ray, hitInfo: out var _hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
+            
+            if (PlayerInput.Instance.MouseInput)
             {
                 m_controller.Agent.velocity = Vector3.zero;
-                m_controller.Agent.SetDestination(_hit.point);
+                m_controller.Agent.SetDestination(PlayerInput.Instance.MouseHit.point);
                 m_controller.Agent.velocity = m_controller.Agent.desiredVelocity;
             
                 var _lookRotation = m_controller.Agent.steeringTarget - m_controller.transform.position;

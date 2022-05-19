@@ -11,15 +11,17 @@ public enum EInteractionType
     PushOrPull
 }
 
+public enum EPlayerState
+{
+    
+}
+
 namespace Player
 {
     [RequireComponent(typeof(NavMeshAgent), typeof(AgentLinkMover))]
     public class PlayerController : MonoBehaviour, IWalkable
     {
         public NavMeshAgent Agent { get; private set; }
-        [Space(10f)]
-        public Camera playerCam;
-        //public GameObject destinationFx;
 
         private MoveStrategy m_mousePointWalk;
 

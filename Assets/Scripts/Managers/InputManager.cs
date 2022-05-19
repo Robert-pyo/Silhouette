@@ -2,17 +2,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using Player;
 
-[System.Serializable]
-public struct tPlayerCommand
-{
-    public KeyCode playerWalk;
-    public KeyCode playerCrouch;
-    public KeyCode playerInteraction;
-    public KeyCode playerClimb;
-    public KeyCode playerThrowReady;
-    public KeyCode playerThrowSomething;
-}
-
 public class InputManager : MonoBehaviour
 {
     private static InputManager m_instance;
