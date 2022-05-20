@@ -42,6 +42,8 @@ public class PlayerInput : MonoBehaviour
     private float m_vInput;
 
     // getter / setter
+    public Camera PlayerCamera => m_camera;
+
     public RaycastHit MouseHit
     {
         get

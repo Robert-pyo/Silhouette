@@ -261,19 +261,6 @@ namespace Player
             m_playerAnim.SetFloat(Velocity, m_input.VInput * moveSpeed);
         }
 
-        private void Jump()
-        {
-            // if (!isInteractable)
-            // {
-            //     ResetInteractionStatus();
-            //     return;
-            // }
-            // m_interactionObstacle = targetObj.GetComponent<Obstacles>();
-            // if (m_interactionObstacle.obstacleType != EObstacleType.Climbable) return;
-
-            m_playerAnim.SetTrigger(OnJump);
-        }
-
         private void ResetInteractionStatus()
         {
             if (!targetObj && !m_interactionObstacle) return;
@@ -281,6 +268,17 @@ namespace Player
             targetObj = null;
             m_interactionObstacle = null;
         }
+
+        // private IEnumerator CullingObjectForCameraView()
+        // {
+        //     var _dir = m_input.PlayerCamera.gameObject.transform.position - transform.position;
+
+        //     if (Physics.Raycast(transform.position, _dir, out var _hit, 100f, LayerMask.GetMask("Wall")))
+        //     {
+        //         Renderer _renderer = _hit.transform.GetComponent<Renderer>();
+        //         _renderer.material
+        //     }
+        // }
 
         // public void IndicateDestination(Vector3 target, Transform targetObject)
         // {
