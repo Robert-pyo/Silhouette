@@ -142,10 +142,7 @@ public class PlayerInput : MonoBehaviour
             m_crouch = !m_crouch;
         }
 
-        if (Input.GetKeyDown(m_command.playerThrowReady))
-        {
-            m_throwReady = !m_throwReady;
-        }
+        m_throwReady = Input.GetKeyDown(m_command.playerThrowReady);
         
         m_throwSomething = Input.GetKeyDown(m_command.playerThrowSomething);
         if (m_throwReady && m_throwSomething) m_throwReady = false;

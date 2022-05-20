@@ -17,13 +17,12 @@ public enum EPlayerState
     Run,
     Crouch,
     PushAndPull,
-    Throwing,
-    Jump,
+    ThrowSomething,
 }
 
 namespace Player
 {
-    [RequireComponent(typeof(NavMeshAgent), typeof(AgentLinkMover))]
+    [RequireComponent(typeof(NavMeshAgent))]
     public class PlayerController : MonoBehaviour, IWalkable
     {
         private StateMachine<EPlayerState> m_playerSM;
@@ -34,7 +33,6 @@ namespace Player
         private MoveStrategy m_mousePointWalk;
 
         private Animator m_playerAnim;
-        private AgentLinkMover m_linkMover;
 
         [Header("Player Info"), SerializeField]
         private float moveSpeed;
@@ -46,6 +44,7 @@ namespace Player
         [SerializeField] private Transform groundChecker;
         
         [HideInInspector] public bool isActing;
+        [HideInInspector] public bool isReadyToThrow;
 
         [Header("Interaction Info")]
         public EInteractionType interactionType;
@@ -78,13 +77,9 @@ namespace Player
             
             Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
-            m_linkMover = GetComponent<AgentLinkMover>();
 
             m_mousePointWalk = new RayPlayerWalk(this);
             rayDetection = new RayDetector(this);
-
-            m_linkMover.onLinkStart += Jump;
-            //m_linkMover.onLinkEnd += Landed;
             
             m_playerSM.ChangeState(EPlayerState.Idle);
         }
@@ -96,7 +91,8 @@ namespace Player
             
             if (isActing) return;
             Move();
-            ThrowSomething();
+
+            ReadyToThrow();
         }
         
         #region States
@@ -185,6 +181,13 @@ namespace Player
             isActing = false;
         }
 
+        private void ThrowSomething_Update()
+        {
+            print("throwSomething");
+            if (!isReadyToThrow) return;
+            ThrowSomething();
+        }
+
         #endregion
 
         
@@ -194,26 +197,39 @@ namespace Player
             m_mousePointWalk.Move();
         }
 
-        private void ThrowSomething()
+        private void ReadyToThrow()
         {
-            if (m_input.ReadyToThrowInput)
-            {
-                if (!_projection.lineRenderer.enabled)
-                    _projection.lineRenderer.enabled = true;
+            if (!m_input.ReadyToThrowInput) return;
 
-                var _mouseDir = mouseCursor.position - transform.position;
-                _projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * _throwForce + transform.up * _throwForce;
-                _projection.SimulateTrajectory(_rockPrefab, _startThrowPos.position, _projectileDir);
+            if (isReadyToThrow)
+            {
+                _projection.lineRenderer.enabled = false;
+                isReadyToThrow = false;
+                
+                m_playerSM.ChangeState(EPlayerState.Idle);
                 return;
             }
+
+            _projection.lineRenderer.enabled = true;
+            isReadyToThrow = true;
+
+            m_playerSM.ChangeState(EPlayerState.ThrowSomething);
+        }
+
+        private void ThrowSomething()
+        {
+            var _mouseDir = mouseCursor.position - transform.position;
+            _projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * _throwForce + transform.up * _throwForce;
+            _projection.SimulateTrajectory(_rockPrefab, _startThrowPos.position, _projectileDir);
             
-            _projection.lineRenderer.enabled = false;
-            
-            if (!m_input.ReadyToThrowInput && !m_input.ThrowInput) return;
+            if (!m_input.ThrowInput) return;
+            isReadyToThrow = false;
             _projection.lineRenderer.enabled = false;
 
             var _spawned = Instantiate(_rockPrefab, _startThrowPos.position, Quaternion.identity);
             _spawned.Init(_projectileDir, false);
+
+            m_playerSM.ChangeState(EPlayerState.Idle);
         }
         
         public void BlockInputToggle()
