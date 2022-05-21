@@ -11,7 +11,7 @@ public class CameraManager : MonoBehaviour
     public Cinemachine.CinemachineVirtualCamera[] vCamArray;
 
     // AreaID, VCAM
-    private Dictionary<int, Cinemachine.CinemachineVirtualCamera> m_dicViewArea = new Dictionary<int, Cinemachine.CinemachineVirtualCamera>();
+    private readonly Dictionary<int, Cinemachine.CinemachineVirtualCamera> m_dicViewArea = new Dictionary<int, Cinemachine.CinemachineVirtualCamera>();
     [SerializeField] private Cinemachine.CinemachineVirtualCamera m_currentView;
 
     [HideInInspector]
@@ -45,6 +45,9 @@ public class CameraManager : MonoBehaviour
 
         m_dicViewArea.TryGetValue(areaID, out m_currentView);
 
-        m_currentView.gameObject.SetActive(true);
+        if (m_currentView)
+        {
+            m_currentView.gameObject.SetActive(true);
+        }
     }
 }

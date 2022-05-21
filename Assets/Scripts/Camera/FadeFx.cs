@@ -8,25 +8,44 @@ public class FadeFx : MonoBehaviour
 
     public float fadeAmountPerLoop;
 
+    private WaitForSeconds m_waitSeconds;
+
     private void Awake()
     {
+        m_waitSeconds = new WaitForSeconds(0.01f);
+    }
 
+    private void StartFadeIn()
+    {
+        StartCoroutine(FadeIn());
+    }
+
+    private void StartFadeOut()
+    {
+        StartCoroutine(FadeOut());
     }
 
     private IEnumerator FadeIn()
     {
         Color _imgColor = fadeImage.color;
 
-        while (_imgColor.a <= 1)
+        while (_imgColor.a >= 0.01)
         {
-            _imgColor.a = fadeAmountPerLoop;
+            _imgColor.a -= fadeAmountPerLoop;
             fadeImage.color = _imgColor;
-            yield return new WaitForSeconds(0.01f);
+            yield return m_waitSeconds;
         }
     }
 
-    private void FadeOut()
+    private IEnumerator FadeOut()
     {
+        Color _imgColor = fadeImage.color;
 
+        while (_imgColor.a <= 0.99)
+        {
+            _imgColor.a += fadeAmountPerLoop;
+            fadeImage.color = _imgColor;
+            yield return m_waitSeconds;
+        }
     }
 }
