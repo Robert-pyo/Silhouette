@@ -163,12 +163,19 @@ namespace Player
 
         private void PushAndPull_Enter()
         {
+            Agent.isStopped = true;
             Agent.ResetPath();
             isActing = true;
         }
 
         private void PushAndPull_Update()
         {
+            if (!isInteractable)
+            {
+                m_playerAnim.SetBool(OnPushAction, false);
+                m_playerSM.ChangeState(EPlayerState.Idle);
+            }
+            
             PushAndPull();
 
             if (!m_input.InteractionInput) return;
@@ -251,10 +258,6 @@ namespace Player
         private void PushAndPull()
         {
             var _moveDir = transform.forward * m_input.VInput;
-
-            Agent.isStopped = true;
-            Agent.ResetPath();
-            Agent.isStopped = false;
 
             targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
