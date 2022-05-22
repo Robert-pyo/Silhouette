@@ -18,12 +18,14 @@ public enum EPlayerState
     Crouch,
     PushAndPull,
     ThrowSomething,
+    Hit,
+    Die,
 }
 
 namespace Player
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class PlayerController : MonoBehaviour, IWalkable
+    public class PlayerController : MonoBehaviour, IWalkable, IDamageable
     {
         private StateMachine<EPlayerState> m_playerSM;
 
@@ -37,6 +39,12 @@ namespace Player
         [Header("Player Info"), SerializeField]
         private float moveSpeed;
         public float MoveSpeed => moveSpeed;
+
+        private ushort m_maxHp;
+        private ushort m_curHp;
+        public ushort MaxHp => m_maxHp;
+        public ushort CurHp => m_curHp;
+        
         [Range(0, 1)] public float walkSpeedReduction;
         [Range(0, 1)] public float crouchSpeedReduction;
 
@@ -45,6 +53,7 @@ namespace Player
         
         [HideInInspector] public bool isActing;
         [HideInInspector] public bool isReadyToThrow;
+        [HideInInspector] public bool isDead;
 
         [Header("Interaction Info")]
         public EInteractionType interactionType;
@@ -57,17 +66,18 @@ namespace Player
 
         [Header("Projection")]
         public Transform mouseCursor;
-        [SerializeField] private Projection _projection;
-        [SerializeField] private Rock _rockPrefab;
-        [SerializeField] private float _throwForce;
-        [SerializeField] private Transform _startThrowPos;
-        private Vector3 _projectileDir;
+        [SerializeField] private Projection projection;
+        [SerializeField] private Rock rockPrefab;
+        [SerializeField] private float throwForce;
+        [SerializeField] private Transform startThrowPos;
+        private Vector3 m_projectileDir;
 
         private static readonly int Velocity = Animator.StringToHash("Velocity");
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
         private static readonly int OnPushAction = Animator.StringToHash("OnPushAction");
         private static readonly int OnPush = Animator.StringToHash("OnPush");
         private static readonly int OnJump = Animator.StringToHash("OnJump");
+        private static readonly int OnDead = Animator.StringToHash("OnDead");
 
         private void Awake()
         {
@@ -109,7 +119,6 @@ namespace Player
             {
                 m_playerAnim.SetBool(IsCrouching, true);
                 m_playerSM.ChangeState(EPlayerState.Crouch);
-                Debug.Log("Change to crouch");
             }
             
             if (Agent.velocity.sqrMagnitude < 0.01f) return;
@@ -190,9 +199,25 @@ namespace Player
 
         private void ThrowSomething_Update()
         {
-            print("throwSomething");
             if (!isReadyToThrow) return;
             ThrowSomething();
+        }
+
+        private void Hit_Enter()
+        {
+            // 맞았을 때 처리
+            m_input.playerControllerInputBlocked = true;
+        }
+
+        private void Hit_Exit()
+        {
+            m_input.playerControllerInputBlocked = false;
+        }
+
+        private void Die_Enter()
+        {
+            // 죽을 때 처리
+            m_input.playerControllerInputBlocked = true;
         }
 
         #endregion
@@ -210,14 +235,14 @@ namespace Player
 
             if (isReadyToThrow)
             {
-                _projection.lineRenderer.enabled = false;
+                projection.lineRenderer.enabled = false;
                 isReadyToThrow = false;
                 
                 m_playerSM.ChangeState(EPlayerState.Idle);
                 return;
             }
 
-            _projection.lineRenderer.enabled = true;
+            projection.lineRenderer.enabled = true;
             isReadyToThrow = true;
 
             m_playerSM.ChangeState(EPlayerState.ThrowSomething);
@@ -226,15 +251,15 @@ namespace Player
         private void ThrowSomething()
         {
             var _mouseDir = mouseCursor.position - transform.position;
-            _projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * _throwForce + transform.up * _throwForce;
-            _projection.SimulateTrajectory(_rockPrefab, _startThrowPos.position, _projectileDir);
+            m_projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * throwForce + transform.up * throwForce;
+            projection.SimulateTrajectory(rockPrefab, startThrowPos.position, m_projectileDir);
             
             if (!m_input.ThrowInput) return;
             isReadyToThrow = false;
-            _projection.lineRenderer.enabled = false;
+            projection.lineRenderer.enabled = false;
 
-            var _spawned = Instantiate(_rockPrefab, _startThrowPos.position, Quaternion.identity);
-            _spawned.Init(_projectileDir, false);
+            var _spawned = Instantiate(rockPrefab, startThrowPos.position, Quaternion.identity);
+            _spawned.Init(m_projectileDir, false);
 
             m_playerSM.ChangeState(EPlayerState.Idle);
         }
@@ -272,22 +297,32 @@ namespace Player
             m_interactionObstacle = null;
         }
 
-        // private IEnumerator CullingObjectForCameraView()
-        // {
-        //     var _dir = m_input.PlayerCamera.gameObject.transform.position - transform.position;
-
-        //     if (Physics.Raycast(transform.position, _dir, out var _hit, 100f, LayerMask.GetMask("Wall")))
-        //     {
-        //         Renderer _renderer = _hit.transform.GetComponent<Renderer>();
-        //         _renderer.material
-        //     }
-        // }
-
         // public void IndicateDestination(Vector3 target, Transform targetObject)
         // {
         //     GameObject _indicator = Instantiate(destinationFx, target, Quaternion.identity);
         //     _indicator.transform.parent = targetObject;
         //     Destroy(_indicator, 1f);
         // }
+        
+        public void Hit(ushort damage)
+        {
+            m_curHp -= damage;
+
+            if (m_curHp == 0)
+            {
+                isDead = true;
+                Die();
+            }
+        }
+
+        public void Die()
+        {
+            m_playerAnim.SetBool(OnDead, true);
+            // 현재 OnDead 애니메이션이 종료되었다면
+            if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+            {
+                // TODO : 게임 오버 처리
+            }
+        }
     }
 }

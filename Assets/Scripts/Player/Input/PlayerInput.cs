@@ -123,6 +123,9 @@ public class PlayerInput : MonoBehaviour
             Debug.Log("플레이어 Input은 오직 하나만 존재할 수 있습니다.");
             Destroy(gameObject);
         }
+        
+        // reset
+        playerControllerInputBlocked = false;
 
         // 마우스 입력을 감지할 카메라 설정
         if (m_camera == null)
