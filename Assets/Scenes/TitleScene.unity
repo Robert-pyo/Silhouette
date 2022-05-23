@@ -182,8 +182,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70060292}
-  m_LocalRotation: {x: 0.28978413, y: 0.000000022902018, z: -0.0000000069341723, w: 0.95709205}
-  m_LocalPosition: {x: -0.00000003981984, y: 10.5547, z: -15.83205}
+  m_LocalRotation: {x: 0.28978413, y: -0.000000022902004, z: 0.000000006934169, w: 0.95709205}
+  m_LocalPosition: {x: 0.000000039819792, y: 10.5547, z: -15.83205}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 523837866}
@@ -4090,8 +4090,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 422282123}
-  m_LocalRotation: {x: 0.28978413, y: 0.000000022902018, z: -0.0000000069341723, w: 0.95709205}
-  m_LocalPosition: {x: -0.00000003981984, y: 10.5547, z: -15.83205}
+  m_LocalRotation: {x: 0.28978413, y: -0.000000022902004, z: 0.000000006934169, w: 0.95709205}
+  m_LocalPosition: {x: 0.000000039819792, y: 10.5547, z: -15.83205}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1039828993}
@@ -4298,7 +4298,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Select Stage
+  m_text: Start
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84dd14695854bbc43a5faa24fcf93d0d, type: 2}
   m_sharedMaterial: {fileID: 21261991626553910, guid: 84dd14695854bbc43a5faa24fcf93d0d, type: 2}
@@ -6015,7 +6015,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 120, y: 150}
+  m_AnchoredPosition: {x: 120, y: 170}
   m_SizeDelta: {x: 150, y: 80}
   m_Pivot: {x: 0, y: 0}
 --- !u!95 &687689952
@@ -6096,7 +6096,19 @@ MonoBehaviour:
   buttonText: Quit
   clickEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85448505}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   hoverEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -25826,7 +25838,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 120, y: 350}
-  m_SizeDelta: {x: 300, y: 100}
+  m_SizeDelta: {x: 200, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!95 &2118251952
 Animator:
@@ -25903,7 +25915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d218e07e7315e243acdfcc700d01eb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonText: Select Stage
+  buttonText: Start
   clickEvent:
     m_PersistentCalls:
       m_Calls: []
