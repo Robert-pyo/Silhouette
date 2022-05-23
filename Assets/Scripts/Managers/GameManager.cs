@@ -22,7 +22,10 @@ public class GameManager : MonoBehaviour
 
         m_instance = this;
 
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        if (GameObject.FindGameObjectWithTag("Player"))
+        {
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
     }
     
     
