@@ -205,16 +205,17 @@ MonoBehaviour:
   groundChecker: {fileID: 4362738546510127822}
   isActing: 0
   isReadyToThrow: 0
+  isDead: 0
   interactionType: 0
   isInteractable: 0
   targetObj: {fileID: 0}
   detectOrigin: {fileID: 4362738546656037733}
   detectDistance: 3
   mouseCursor: {fileID: 0}
-  _projection: {fileID: 4362738547019599387}
-  _rockPrefab: {fileID: 4785313128945938067, guid: 785047fb7ce7ed44b87da377996b6fe5, type: 3}
-  _throwForce: 2
-  _startThrowPos: {fileID: 4362738545725029842}
+  projection: {fileID: 4362738547019599387}
+  rockPrefab: {fileID: 4785313128945938067, guid: 785047fb7ce7ed44b87da377996b6fe5, type: 3}
+  throwForce: 2
+  startThrowPos: {fileID: 4362738545725029842}
 --- !u!114 &4362738547019599387
 MonoBehaviour:
   m_ObjectHideFlags: 0
