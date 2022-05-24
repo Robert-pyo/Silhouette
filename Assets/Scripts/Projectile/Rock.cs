@@ -7,10 +7,16 @@ public class Rock : MonoBehaviour
 {
     private Rigidbody _rigidbody;
     private bool m_isGhost;
+    private Outline m_outline;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        m_outline = gameObject.AddComponent<Outline>();
+
+        m_outline.enabled = true;
+        m_outline.OutlineMode = Outline.Mode.SilhouetteOnly;
+        m_outline.OutlineColor = Color.white;
     }
 
     public void Init(Vector3 velocity, bool isGhost)
