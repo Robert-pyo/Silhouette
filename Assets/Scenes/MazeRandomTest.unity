@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -166,10 +166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f091b57e9032a1741be3d2da77d9070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_width: 10
-  m_height: 10
+  m_width: 5
+  m_height: 5
   m_floorPrefab: {fileID: 6257800485735965347, guid: cf8443763fc34314490f8a3e2f94dd37, type: 3}
-  m_wallPrefab: {fileID: 8730245854331329977, guid: b2452a5c2cd649a4db9eebcd16f7b155, type: 3}
+  m_straightWallPrefab: {fileID: 1766057096712464782, guid: 09a8cbf6ea13fe84788a10339727bee9, type: 3}
+  m_rightWallPrefab: {fileID: 1766057096712464782, guid: e80326c6636705948addf2b0488bcaf5, type: 3}
+  m_leftWallPrefab: {fileID: 1766057096712464782, guid: ee9a482f77c87bf44a14db1f44e92052, type: 3}
 --- !u!1 &858829532
 GameObject:
   m_ObjectHideFlags: 0

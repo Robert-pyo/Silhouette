@@ -7,12 +7,14 @@ public class RandomMazeGenerator : MonoBehaviour
 {
     [SerializeField] private int m_width;
     [SerializeField] private int m_height;
-    private int m_seed;
 
     private List<Node> m_grid = new List<Node>();
 
     [SerializeField] private GameObject m_floorPrefab;
-    [SerializeField] private GameObject m_wallPrefab;
+    [SerializeField] private GameObject m_straightWallPrefab;
+    [SerializeField] private GameObject m_rightWallPrefab;
+    [SerializeField] private GameObject m_leftWallPrefab;
+
     private const float GRID_X_OFFSET = 6f;
     private const float GRID_Z_OFFSET = 6f;
 
@@ -20,11 +22,6 @@ public class RandomMazeGenerator : MonoBehaviour
 
     private void Awake()
     {
-        m_seed = (int)(Time.time * 123f);
-        
-        // 랜덤 시드 부여
-        Random.InitState(m_seed);
-
         if (!m_floorPrefab) return;
         
         for (int i = 0; i < m_height; ++i)
@@ -41,10 +38,135 @@ public class RandomMazeGenerator : MonoBehaviour
         // 리스트에 추가된 각 노드들의 이웃 노드 연결
         LinkNodes();
 
-        int _x = Random.Range(0, m_width);
-        int _y = Random.Range(0, m_height);
+        int _startX = Random.Range(0, m_width);
+        int _startY = Random.Range(0, m_height);
+
+        print($"{_startX}, {_startY}");
+        print(_startY * m_width + _startX);
         
-        GrowingTreeAlgorithm(_x, _y);
+        RecursiveGrowingTreeNewest(_startX, _startY);
+    }
+
+    private void GenerateWalls(Node prevNode, Node currentNode, int x, int y)
+    {
+        Quaternion _eulerAngle = Quaternion.identity;
+
+        if (prevNode == null)
+        {
+            switch (currentNode.nodeState)
+            {
+                case ENodeDirState.Right:
+                    _eulerAngle = Quaternion.Euler(0f, 90f, 0f);
+                    break;
+                case ENodeDirState.Left:
+                    _eulerAngle = Quaternion.Euler(0f, -90f, 0f);
+                    break;
+            }
+
+            GameObject _straight = Instantiate(m_straightWallPrefab,
+                    new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET),
+                    _eulerAngle);
+
+            _straight.transform.SetParent(transform);
+            return;
+        }
+
+        if (prevNode.nodeState == currentNode.nodeState)
+        {
+            if (currentNode.nodeState == ENodeDirState.Left 
+                || currentNode.nodeState == ENodeDirState.Right)
+            {
+                GameObject _straight = Instantiate(m_straightWallPrefab, 
+                    new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), 
+                    Quaternion.Euler(0f, 90f, 0f));
+
+                _straight.transform.SetParent(transform);
+            }
+            return;
+        }
+
+        switch (currentNode.nodeState)
+        {
+            case ENodeDirState.Right:
+                {
+                    if (prevNode.nodeState == ENodeDirState.Down)
+                    {
+                        _eulerAngle = Quaternion.Euler(0f, 180f, 0f);
+
+                        GameObject _downToRight = Instantiate(m_leftWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                        _downToRight.transform.SetParent(transform);
+                        break;
+                    }
+
+                    GameObject _upToRight = Instantiate(m_rightWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                    _upToRight.transform.SetParent(transform);
+                }
+                break;
+
+            case ENodeDirState.Left:
+                {
+                    if (prevNode.nodeState == ENodeDirState.Down)
+                    {
+                        _eulerAngle = Quaternion.Euler(0f, 180f, 0f);
+
+                        GameObject _downToLeft = Instantiate(m_rightWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                        _downToLeft.transform.SetParent(transform);
+                        break;
+                    }
+
+                    GameObject _upToLeft = Instantiate(m_leftWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                    _upToLeft.transform.SetParent(transform);
+                }
+                break;
+
+            case ENodeDirState.Up:
+                {
+                    if (prevNode.nodeState == ENodeDirState.Right)
+                    {
+                        _eulerAngle = Quaternion.Euler(0f, 90f, 0f);
+
+                        GameObject _rightToUp = Instantiate(m_leftWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                        _rightToUp.transform.SetParent(transform);
+                        break;
+                    }
+
+                    _eulerAngle = Quaternion.Euler(0f, -90f, 0f);
+
+                    GameObject _leftToUp = Instantiate(m_rightWallPrefab,
+                        new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                    _leftToUp.transform.SetParent(transform);
+                }
+                break;
+
+            case ENodeDirState.Down:
+                {
+                    if (prevNode.nodeState == ENodeDirState.Right)
+                    {
+                        GameObject _rightToDown = Instantiate(m_leftWallPrefab,
+                            new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                        _rightToDown.transform.SetParent(transform);
+                        break;
+                    }
+
+                    GameObject _leftToUp = Instantiate(m_rightWallPrefab,
+                        new Vector3(x * GRID_X_OFFSET, 0f, y * GRID_Z_OFFSET), _eulerAngle);
+
+                    _leftToUp.transform.SetParent(transform);
+                }
+                break;
+        }
     }
 
     private void InsertRandomNodeToList()
@@ -68,52 +190,92 @@ public class RandomMazeGenerator : MonoBehaviour
     {
         for (int i = 0; i < m_grid.Count; ++i)
         {
-            if (i - m_width >= 0)
-            {
-                m_grid[i].upNode = m_grid[i - m_width];
-                Debug.Log($"{i}번 : {m_grid[i].upNode.index}");
-            }
-
             if (i + m_width < m_grid.Count)
             {
-                m_grid[i].downNode = m_grid[i + m_width];
-                Debug.Log($"{i}번 : {m_grid[i].downNode.index}");
+                m_grid[i].upNode = m_grid[i + m_width];
+                Debug.Log($"{i} - UP : {m_grid[i].upNode.index}");
+            }
+            
+            if (i - m_width >= 0)
+            {
+                m_grid[i].downNode = m_grid[i - m_width];
+                Debug.Log($"{i} - DOWN : {m_grid[i].downNode.index}");
             }
 
-            if (i - 1 >= 0)
+            if (i - 1 >= 0 && i % m_width > 0)
             {
                 m_grid[i].leftNode = m_grid[i - 1];
-                Debug.Log($"{i}번 : {m_grid[i].leftNode.index}");
+                Debug.Log($"{i} - LEFT : {m_grid[i].leftNode.index}");
             }
 
-            if (i + 1 < m_grid.Count)
+            if (i + 1 < m_grid.Count && i % m_width < m_width - 1)
             {
                 m_grid[i].rightNode = m_grid[i + 1];
-                Debug.Log($"{i}번 : {m_grid[i].rightNode.index}");
+                Debug.Log($"{i} - RIGHT : {m_grid[i].rightNode.index}");
             }
         }
     }
 
-    private void GrowingTreeAlgorithm(int startX, int startY)
+    private void RecursiveGrowingTreeNewest(int startX, int startY)
     {
-        int _nodeIndex = m_width * startY - (m_width - startX) - 1;
+        int _nodeIndex = m_width * startY + startX;
 
-        if (m_grid[_nodeIndex].isVisited)
-        {
-            Node _targetNode = SelectNewestNode(m_grid[_nodeIndex].upNode, m_grid[_nodeIndex].downNode,
-                m_grid[_nodeIndex].leftNode, m_grid[_nodeIndex].rightNode);
+        Node _prevNode = m_currentNode;
+        m_currentNode = m_grid[_nodeIndex];
 
-            if (_targetNode == null) return;
+        // 근접한 정점 중 가장 최신에 등록된(Index가 가장 큰) Node 선정
+        Node _newestNeighbor = SelectNewestNode(m_currentNode.upNode, m_currentNode.downNode,
+                m_currentNode.leftNode, m_currentNode.rightNode);
 
-            int _targetX = (_targetNode.index / m_width) % m_height;
-            int _targetY = _targetNode.index % m_width;
-            GrowingTreeAlgorithm(_targetX, _targetY);
+        GenerateWalls(_prevNode, m_currentNode, startX, startY);
 
-            return;
-        }
+        // 이미 방문한 적이 있고 이웃 노드들도 이미 방문한 적이 있을 때
+        if (_newestNeighbor == null) return;
         
         // 시작 정점에 방문
-        m_grid[_nodeIndex].isVisited = true;
+        if (!m_currentNode.isVisited)
+        {
+            m_currentNode.isVisited = true;
+        }
+
+        m_currentNode.connectedNode = _newestNeighbor;
+
+        Debug.Log(m_currentNode.connectedNode.index);
+
+        int _newestX = 0;
+        int _newestY = 0;
+        switch (m_currentNode.nodeState)
+        {
+            case ENodeDirState.Up:
+            {
+                _newestX = (_nodeIndex + m_width) % m_width;
+                _newestY = ((_nodeIndex + m_width) / m_width) % m_height;
+            }
+            break;
+
+            case ENodeDirState.Down:
+            {
+                _newestX = (_nodeIndex - m_width) % m_width;
+                _newestY = ((_nodeIndex - m_width) / m_width) % m_height;
+            }
+            break;
+
+            case ENodeDirState.Left:
+            {
+                _newestX = (_nodeIndex - 1) % m_width;
+                _newestY = ((_nodeIndex - 1) / m_width) % m_height;
+            }
+            break;
+
+            case ENodeDirState.Right:
+            {
+                _newestX = (_nodeIndex + 1) % m_width;
+                _newestY = ((_nodeIndex + 1) / m_width) % m_height;
+            }
+            break;
+        }
+        
+        RecursiveGrowingTreeNewest(_newestX, _newestY);
     }
 
     private Node SelectNewestNode(params Node[] nodes)
@@ -126,10 +288,34 @@ public class RandomMazeGenerator : MonoBehaviour
             if (_node == null) continue;
             if (_node.isVisited) continue;
 
-            if (_node.index <= _newestValue) continue;
+            if (_node.index < _newestValue) continue;
             
             _newestValue = _node.index;
             _newestNode = _node;
+
+            if (m_currentNode.upNode?.index == _newestValue)
+            {
+                m_currentNode.nodeState = ENodeDirState.Up;
+                continue;
+            }
+            
+            if (m_currentNode.downNode?.index == _newestValue)
+            {
+                m_currentNode.nodeState = ENodeDirState.Down;
+                continue;
+            }
+
+            if (m_currentNode.leftNode?.index == _newestValue)
+            {
+                m_currentNode.nodeState = ENodeDirState.Left;
+                continue;
+            }
+
+            if (m_currentNode.rightNode?.index == _newestValue)
+            {
+                m_currentNode.nodeState = ENodeDirState.Right;
+                continue;
+            }
         }
 
         return _newestNode;

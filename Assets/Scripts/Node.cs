@@ -24,6 +24,8 @@ public class Node
     public Node leftNode;
     public Node rightNode;
 
+    public Node connectedNode;
+
     public Node()
     {
         index = s_UNodeID++;
