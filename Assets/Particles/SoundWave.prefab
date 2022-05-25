@@ -184,7 +184,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2537325071222525293, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}

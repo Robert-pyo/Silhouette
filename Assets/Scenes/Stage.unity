@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 1c98f8c915b12fe4fb013d3f064af7ac, type: 2}
 --- !u!1 &85448502
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 427712, guid: 2285e25ef19f04e4ab01a25c9027814c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.571428
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 427712, guid: 2285e25ef19f04e4ab01a25c9027814c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -677,7 +677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4362738547019599388, guid: 4f895e5319bc6964698e35bbe2965bc9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4362738547019599390, guid: 4f895e5319bc6964698e35bbe2965bc9, type: 3}
       propertyPath: mouseCursor
@@ -1145,7 +1145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &926067564
 Transform:
   m_ObjectHideFlags: 0
@@ -1432,8 +1432,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083cd9a54a097b540ab2c54091faff15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_segmentStart: {fileID: 0}
-  m_segmentEnd: {fileID: 0}
+  m_segmentStart: {fileID: 1674573999}
+  m_segmentEnd: {fileID: 1693475892}
   m_segmentList: []
   segmentPrefab: {fileID: 3490059521536546173, guid: 84675f7ac0c148d439699f0496fca8b3, type: 3}
   m_segmentCount: 50
@@ -1666,7 +1666,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1674573999
 Transform:
   m_ObjectHideFlags: 0
