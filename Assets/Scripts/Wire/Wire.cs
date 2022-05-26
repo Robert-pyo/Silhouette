@@ -71,7 +71,7 @@ public class Wire : MonoBehaviour
             m_configJoint = m_segmentList[i].GetComponent<ConfigurableJoint>();
             m_springJoint = m_segmentList[i].GetComponent<SpringJoint>();
 
-            if (i > m_segmentCount / 2)
+            if (i > m_segmentCount / 4)
             {
                 if (i == m_segmentCount - 1)
                 {
@@ -86,7 +86,7 @@ public class Wire : MonoBehaviour
                 m_springJoint.connectedBody = m_prevBody;
                 continue;
             }
-            else if (i == m_segmentCount / 2)
+            else if (i == m_segmentCount / 4)
             {
                 m_configJoint.connectedBody = m_prevBody;
                 m_springJoint.connectedBody = m_segmentList[i + 1].GetComponent<Rigidbody>();

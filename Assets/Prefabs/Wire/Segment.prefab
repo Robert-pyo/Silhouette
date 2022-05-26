@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 3490059521536546174}
   - component: {fileID: 3490059521536546161}
   - component: {fileID: 3490059521536546160}
-  - component: {fileID: 3490059521536546175}
   - component: {fileID: 3490059521536546162}
   - component: {fileID: 3490059521536546164}
   - component: {fileID: 3490059521536546163}
   - component: {fileID: 129496770381176510}
-  m_Layer: 0
+  - component: {fileID: 1570193942722370009}
+  m_Layer: 12
   m_Name: Segment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,19 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &3490059521536546175
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3490059521536546173}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &3490059521536546162
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -133,9 +120,9 @@ ConfigurableJoint:
   m_XMotion: 2
   m_YMotion: 2
   m_ZMotion: 2
-  m_AngularXMotion: 2
+  m_AngularXMotion: 0
   m_AngularYMotion: 2
-  m_AngularZMotion: 2
+  m_AngularZMotion: 0
   m_LinearLimitSpring:
     spring: 0
     damper: 0
@@ -169,18 +156,18 @@ ConfigurableJoint:
   m_TargetVelocity: {x: 0, y: 0, z: 0}
   m_XDrive:
     serializedVersion: 3
-    positionSpring: 30
-    positionDamper: 1
+    positionSpring: 100
+    positionDamper: 10
     maximumForce: 3.4028233e+38
   m_YDrive:
     serializedVersion: 3
-    positionSpring: 30
-    positionDamper: 1
+    positionSpring: 100
+    positionDamper: 10
     maximumForce: 3.4028233e+38
   m_ZDrive:
     serializedVersion: 3
-    positionSpring: 30
-    positionDamper: 1
+    positionSpring: 100
+    positionDamper: 10
     maximumForce: 3.4028233e+38
   m_TargetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_TargetAngularVelocity: {x: 0, y: 0, z: 0}
@@ -224,10 +211,10 @@ SpringJoint:
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -1, y: 1.5, z: -5}
   serializedVersion: 2
-  m_Spring: 20
-  m_Damper: 5
+  m_Spring: 10
+  m_Damper: 0
   m_MinDistance: 0
-  m_MaxDistance: 0
+  m_MaxDistance: 0.1
   m_Tolerance: 0.025
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
@@ -247,3 +234,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae7403c0bd676df43904e98f17d27fb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &1570193942722370009
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3490059521536546173}
+  m_Material: {fileID: 13400000, guid: 3264a2d23e3d28844be67e64a59cbce0, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 3, z: 3}
+  m_Center: {x: 0, y: 0, z: 0}

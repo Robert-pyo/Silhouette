@@ -24,7 +24,6 @@ public enum EPlayerState
 
 namespace Player
 {
-    [RequireComponent(typeof(NavMeshAgent))]
     public class PlayerController : MonoBehaviour, IWalkable, IDamageable
     {
         private StateMachine<EPlayerState> m_playerSM;
@@ -32,16 +31,20 @@ namespace Player
         private PlayerInput m_input;
         public NavMeshAgent Agent { get; private set; }
 
-        private MoveStrategy m_mousePointWalk;
+        private MoveStrategy m_movement;
 
         private Animator m_playerAnim;
 
+        private Rigidbody m_rigidbody;
+        public Rigidbody PlayerRigidbody => m_rigidbody;
+
         [Header("Player Info"), SerializeField]
         private float moveSpeed;
+        [SerializeField] private float maxMoveSpeed = 10f;
         public float MoveSpeed => moveSpeed;
 
-        private ushort m_maxHp;
-        private ushort m_curHp;
+        [SerializeField] private ushort m_maxHp;
+        [SerializeField] private ushort m_curHp;
         public ushort MaxHp => m_maxHp;
         public ushort CurHp => m_curHp;
         
@@ -85,10 +88,12 @@ namespace Player
 
             m_input = PlayerInput.Instance;
             
-            Agent = GetComponent<NavMeshAgent>();
+            //Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
+            m_rigidbody = GetComponent<Rigidbody>();
 
-            m_mousePointWalk = new RayPlayerWalk(this);
+            //m_movement = new RayPlayerWalk(this);
+            m_movement = new RigidbodyMovement(this);
             rayDetection = new RayDetector(this);
             
             m_playerSM.ChangeState(EPlayerState.Idle);
@@ -120,28 +125,30 @@ namespace Player
                 m_playerAnim.SetBool(IsCrouching, true);
                 m_playerSM.ChangeState(EPlayerState.Crouch);
             }
-            
-            if (Agent.velocity.sqrMagnitude < 0.01f) return;
+
+            //if (Agent.velocity.sqrMagnitude < 0.01f) return;
+            if (m_rigidbody.velocity.sqrMagnitude < 0.01f) return;
             
             m_playerSM.ChangeState(EPlayerState.Run);
         }
 
         private void Run_Update()
         {
-            m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
+            m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
 
             // 걸음 속도 초기화
             if (!m_input.WalkInput)
             {
-                Agent.speed = moveSpeed;
+                moveSpeed = maxMoveSpeed;
             }
             
-            if (Agent.velocity.sqrMagnitude < 0.01f)
+            if (m_rigidbody.velocity.sqrMagnitude < 0.01f)
                 m_playerSM.ChangeState(EPlayerState.Idle);
 
             if (m_input.WalkInput)
             {
-                Agent.speed = moveSpeed * (1 - walkSpeedReduction);
+                //Agent.speed = moveSpeed * (1 - walkSpeedReduction);
+                moveSpeed = maxMoveSpeed * (1 - walkSpeedReduction);
             }
 
             if (!m_input.CrouchInput) return;
@@ -152,28 +159,28 @@ namespace Player
 
         private void Crouch_Enter()
         {
-            Agent.speed = moveSpeed * (1 - crouchSpeedReduction);
+            moveSpeed = maxMoveSpeed * (1 - crouchSpeedReduction);
         }
 
         private void Crouch_Update()
         {
-            m_playerAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
+            m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
 
             if (m_input.CrouchInput) return;
 
-            m_playerSM.ChangeState(Agent.velocity.sqrMagnitude > 0.01f ? EPlayerState.Run : EPlayerState.Idle);
+            m_playerSM.ChangeState(m_rigidbody.velocity.sqrMagnitude > 0.01f ? EPlayerState.Run : EPlayerState.Idle);
         }
 
         private void Crouch_Exit()
         {
-            Agent.speed = moveSpeed;
+            //Agent.speed = moveSpeed;
             m_playerAnim.SetBool(IsCrouching, false);
         }
 
         private void PushAndPull_Enter()
         {
-            Agent.isStopped = true;
-            Agent.ResetPath();
+            //Agent.isStopped = true;
+            //Agent.ResetPath();
             isActing = true;
         }
 
@@ -225,8 +232,7 @@ namespace Player
         
         private void Move()
         {
-            if (!m_input.MouseInput) return;
-            m_mousePointWalk.Move();
+            m_movement.Move();
         }
 
         private void ReadyToThrow()
@@ -267,7 +273,7 @@ namespace Player
         public void BlockInputToggle()
         {
             isActing = !isActing;
-            Agent.isStopped = !Agent.isStopped;
+            //Agent.isStopped = !Agent.isStopped;
         }
 
         public void GenerateWalkSoundWave()
@@ -276,7 +282,7 @@ namespace Player
             if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, float.MaxValue, LayerMask.GetMask("Ground")))
             {
                 SoundWaveManager.Instance.GenerateSoundWave(
-                    _hit.transform, _hit.point, Vector3.zero, Agent.speed);
+                    _hit.transform, _hit.point, Vector3.zero, moveSpeed);
             }
         }
 
@@ -285,7 +291,8 @@ namespace Player
             var _moveDir = transform.forward * m_input.VInput;
 
             targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+            //Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+            transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             m_playerAnim.SetFloat(Velocity, m_input.VInput * moveSpeed);
         }
 
@@ -296,13 +303,6 @@ namespace Player
             targetObj = null;
             m_interactionObstacle = null;
         }
-
-        // public void IndicateDestination(Vector3 target, Transform targetObject)
-        // {
-        //     GameObject _indicator = Instantiate(destinationFx, target, Quaternion.identity);
-        //     _indicator.transform.parent = targetObject;
-        //     Destroy(_indicator, 1f);
-        // }
         
         public void Hit(ushort damage)
         {

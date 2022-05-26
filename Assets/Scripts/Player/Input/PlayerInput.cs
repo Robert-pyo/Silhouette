@@ -26,6 +26,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField]
     // 마우스 입력
     private Camera m_camera;
+    private Transform m_camDirection;
     private RaycastHit m_mouseHit;
     private bool m_isMouseClickedGround;
 
@@ -39,10 +40,12 @@ public class PlayerInput : MonoBehaviour
 
     // 상호작용 입력
     private bool m_interaction;
+    private float m_hInput;
     private float m_vInput;
 
     // getter / setter
     public Camera PlayerCamera => m_camera;
+    public Transform CamDirection => m_camDirection;
 
     public RaycastHit MouseHit
     {
@@ -110,6 +113,17 @@ public class PlayerInput : MonoBehaviour
             return m_vInput;
         }
     }
+
+    public float HInput
+    {
+        get
+        {
+            if (playerControllerInputBlocked)
+                return 0;
+
+            return m_hInput;
+        }
+    }
     
 
     private void Awake()
@@ -132,6 +146,8 @@ public class PlayerInput : MonoBehaviour
         {
             m_camera = Camera.main;
         }
+
+        m_camDirection = GameObject.FindGameObjectWithTag("CameraDirection").transform;
     }
 
     private void Update()
@@ -154,12 +170,13 @@ public class PlayerInput : MonoBehaviour
         
         m_interaction = Input.GetKeyDown(m_command.playerInteraction);
 
+        m_hInput = Input.GetAxis("Horizontal");
         m_vInput = Input.GetAxis("Vertical");
     }
 
     private void CalcMouseHit()
     {
-        if (!Input.GetButtonDown("Fire2")) return;
+        if (!Input.GetButtonDown("Fire1")) return;
         
         Ray _ray = m_camera.ScreenPointToRay(Input.mousePosition);
 
