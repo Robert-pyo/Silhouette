@@ -22,8 +22,22 @@ public class GameManager : MonoBehaviour
 
         m_instance = this;
 
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        if (GameObject.FindGameObjectWithTag("Player"))
+        {
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
     }
-    
-    
+
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        // 에디터 상에서의 게임 종료
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // 실제 애플리케이션에서의 종료
+        Application.Quit();
+        //
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
+#endif
+    }
 }

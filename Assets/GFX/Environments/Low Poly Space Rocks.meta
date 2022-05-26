@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/GFX/Environments/Low Poly Space Rocks.meta
 guid: 9f82ecb3e850ba1499ff59a92bf99131
+========
+guid: 441695fd46599674c97fddc21f415dd2
+>>>>>>>> TitleScene:Assets/Plugins/Modern UI Pack.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
