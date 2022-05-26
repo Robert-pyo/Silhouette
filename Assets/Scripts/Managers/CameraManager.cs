@@ -15,7 +15,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private Cinemachine.CinemachineVirtualCamera m_currentView;
 
     [HideInInspector] public UnityEvent<int> onCameraChangeEvent;
-    [HideInInspector] public UnityEvent onCameraDirectionReset;
+    //[HideInInspector] public UnityEvent onCameraDirectionReset;
 
     private void Awake()
     {
@@ -48,9 +48,7 @@ public class CameraManager : MonoBehaviour
     // 코루틴으로 WaitUntil을 사용하여 구현함
     private IEnumerator ChangeDirection(int areaID)
     {
-        yield return new WaitUntil(() => PlayerInput.Instance.VInput < 0.5f && PlayerInput.Instance.HInput < 0.5f);
-
-        onCameraDirectionReset?.Invoke();
+        yield return new WaitUntil(() => PlayerInput.Instance.VInput < 0.1f && PlayerInput.Instance.HInput < 0.1f);
 
         m_currentView.gameObject.SetActive(false);
 

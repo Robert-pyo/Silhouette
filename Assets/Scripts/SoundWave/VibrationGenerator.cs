@@ -16,7 +16,7 @@ public class VibrationGenerator : MonoBehaviour
 
         m_outline.enabled = true;
         m_outline.OutlineMode = Outline.Mode.SilhouetteOnly;
-        m_outline.OutlineColor = Color.blue;
+        m_outline.OutlineColor = Color.cyan;
     }
 
     private void OnEnable()
