@@ -8,7 +8,8 @@ using UnityEngine.Events;
 public enum EInteractionType
 {
     Item,
-    PushOrPull
+    PushOrPull,
+    VisionWard,
 }
 
 public enum EPlayerState
@@ -18,6 +19,7 @@ public enum EPlayerState
     Crouch,
     PushAndPull,
     ThrowSomething,
+    OnActivateWard,
     Hit,
     Die,
 }
@@ -67,6 +69,11 @@ namespace Player
         private Obstacles m_interactionObstacle;
         private InteractDetectStrategy rayDetection;
 
+        [Header("For Link To Vision Ward")]
+        public Wire wire;
+        public Transform wireTiedPosition;
+        private InteractionCommand m_activateVisionWard;
+
         [Header("Projection")]
         public Transform mouseCursor;
         [SerializeField] private Projection projection;
@@ -74,6 +81,9 @@ namespace Player
         [SerializeField] private float throwForce;
         [SerializeField] private Transform startThrowPos;
         private Vector3 m_projectileDir;
+
+        public UnityAction interactionPopUpEvent;
+        public UnityAction popUpReleaseEvent;
 
         private static readonly int Velocity = Animator.StringToHash("Velocity");
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
@@ -95,7 +105,11 @@ namespace Player
             //m_movement = new RayPlayerWalk(this);
             m_movement = new RigidbodyMovement(this);
             rayDetection = new RayDetector(this);
-            
+
+            // Command
+            m_activateVisionWard = new VisionWardInteraction(this);
+
+
             m_playerSM.ChangeState(EPlayerState.Idle);
         }
 
@@ -109,15 +123,46 @@ namespace Player
 
             ReadyToThrow();
         }
-        
+
+        private void LateUpdate()
+        {
+            if (isInteractable)
+            {
+                interactionPopUpEvent?.Invoke();
+            }
+            else
+            {
+                popUpReleaseEvent?.Invoke();
+            }
+        }
+
         #region States
         private void Idle_Update()
         {
-            if (isInteractable && m_input.InteractionInput && interactionType == EInteractionType.PushOrPull)
+            if (isInteractable && m_input.InteractionInput)
             {
-                m_playerAnim.SetTrigger(OnPush);
-                m_playerAnim.SetBool(OnPushAction, true);
-                m_playerSM.ChangeState(EPlayerState.PushAndPull);
+                switch (interactionType)
+                {
+                    case EInteractionType.PushOrPull:
+                        {
+                            m_playerAnim.SetTrigger(OnPush);
+                            m_playerAnim.SetBool(OnPushAction, true);
+                            m_playerSM.ChangeState(EPlayerState.PushAndPull);
+                        }
+                        break;
+
+                    case EInteractionType.VisionWard:
+                        {
+                            // 애니메이션 추가 필요
+                            m_playerSM.ChangeState(EPlayerState.OnActivateWard);
+                            print("Vision");
+                        }
+                        break;
+
+                    default:
+                        Debug.LogError("현재 상호작용에 맞는 행동이 존재하지 않습니다.");
+                        break;
+                }
             }
 
             if (m_input.CrouchInput)
@@ -208,6 +253,26 @@ namespace Player
         {
             if (!isReadyToThrow) return;
             ThrowSomething();
+        }
+
+        private void OnActivateWard_Enter()
+        {
+            isActing = true;
+
+            m_activateVisionWard.Execute();
+        }
+
+        private void OnActivateWard_Update()
+        {
+            if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+            {
+                m_playerSM.ChangeState(EPlayerState.Idle);
+            }
+        }
+
+        private void OnActivateWard_Exit()
+        {
+            isActing = false;
         }
 
         private void Hit_Enter()
@@ -302,6 +367,12 @@ namespace Player
             
             targetObj = null;
             m_interactionObstacle = null;
+        }
+
+        public Wire EnableWire()
+        {
+            GameObject _obj = Instantiate(wire.gameObject, Vector3.zero, Quaternion.identity);
+            return _obj.GetComponent<Wire>();
         }
         
         public void Hit(ushort damage)

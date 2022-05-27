@@ -34,6 +34,12 @@ public class RayDetector : InteractDetectStrategy
                 }
                 break;
 
+                case "VisionWard":
+                    {
+                        m_player.interactionType = EInteractionType.VisionWard;
+                    }
+                    break;
+
                 default:
                 break;
             }

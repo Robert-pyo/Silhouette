@@ -10,7 +10,16 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public PlayerController player;
 
+    [Header("Level Conditions")]
+    [SerializeField] private LevelData m_levelData;
+    private int currentLevel;
+    [SerializeField] private int activatedVisionCount;
+
     public UnityAction onItemUsed;
+
+    public UnityAction onWireCreate;
+    public UnityAction onVisionWardActivated;
+    public UnityAction onVisionWardDeactivated;
 
     private void Awake()
     {
@@ -26,6 +35,22 @@ public class GameManager : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         }
+
+        currentLevel = m_levelData.level;
+        activatedVisionCount = 0;
+    }
+
+    public void OnWardEnabled()
+    {
+        onVisionWardActivated?.Invoke();
+        activatedVisionCount++;
+        onWireCreate?.Invoke();
+    }
+
+    public void OnWardDisabled()
+    {
+        onVisionWardDeactivated?.Invoke();
+        activatedVisionCount--;
     }
 
     public void ExitGame()

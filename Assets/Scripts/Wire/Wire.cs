@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class Wire : MonoBehaviour
 {
-    [SerializeField] private Transform m_segmentStart;
-    [SerializeField] private Transform m_segmentEnd;
+    public Transform segmentStart;
+    public Transform segmentEnd;
     [SerializeField] private List<Transform> m_segmentList = new List<Transform>();
 
     private ObjectPool<Segment> m_segmentPool;
@@ -25,23 +25,9 @@ public class Wire : MonoBehaviour
 
     private void Awake()
     {
-        if (!m_segmentStart || !m_segmentEnd)
-        {
-            Debug.LogError($"시작점과 끝점이 정해져있지 않습니다.");
-            return;
-        }
-
-        m_prevBody = m_segmentStart.GetComponent<Rigidbody>();
-
-        m_wireDir = m_segmentEnd.position - m_segmentStart.position;
-        m_segmentPerDistance = m_wireDir.magnitude / m_segmentCount;
-
         _line = GetComponent<LineRenderer>();
-    }
 
-    private void Start()
-    {
-        CreateWire();
+        GameManager.Instance.onWireCreate += CreateWire;
     }
 
     private void Update()
@@ -54,6 +40,16 @@ public class Wire : MonoBehaviour
 
     private void CreateWire()
     {
+        if (!segmentStart || !segmentEnd)
+        {
+            Debug.LogError($"시작점과 끝점이 정해져있지 않습니다.");
+            return;
+        }
+        print("CreateWire");
+        m_prevBody = segmentStart.GetComponent<Rigidbody>();
+        m_wireDir = segmentEnd.position - segmentStart.position;
+        m_segmentPerDistance = m_wireDir.magnitude / m_segmentCount;
+
         for (int i = 0; i < m_segmentCount; ++i)
         {
             GameObject _wireSegment = Instantiate(segmentPrefab, m_prevBody.position + m_wireDir.normalized * m_segmentPerDistance, Quaternion.identity);
@@ -64,7 +60,7 @@ public class Wire : MonoBehaviour
         }
 
         _line.positionCount = m_segmentCount;
-        m_prevBody = m_segmentStart.GetComponent<Rigidbody>();
+        m_prevBody = segmentStart.GetComponent<Rigidbody>();
 
         for (int i = 0; i < m_segmentCount; ++i)
         {
@@ -75,7 +71,7 @@ public class Wire : MonoBehaviour
             {
                 if (i == m_segmentCount - 1)
                 {
-                    m_prevBody = m_segmentEnd.GetComponent<Rigidbody>();
+                    m_prevBody = segmentEnd.GetComponent<Rigidbody>();
                     m_configJoint.connectedBody = m_prevBody;
                     m_springJoint.connectedBody = m_prevBody;
                     break;
@@ -98,7 +94,7 @@ public class Wire : MonoBehaviour
             m_prevBody = m_segmentList[i].GetComponent<Rigidbody>();
         }
 
-        m_configJoint.connectedBody = m_segmentEnd.GetComponent<Rigidbody>();
+        m_configJoint.connectedBody = segmentEnd.GetComponent<Rigidbody>();
     }
 
     // private void CreateWire()

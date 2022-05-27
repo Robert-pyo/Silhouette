@@ -8,6 +8,7 @@ TagManager:
   - PushOrPull
   - CameraDirection
   - Wire
+  - VisionWard
   layers:
   - Default
   - TransparentFX
