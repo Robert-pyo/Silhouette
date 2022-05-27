@@ -153,7 +153,7 @@ namespace Player
 
                     case EInteractionType.VisionWard:
                         {
-                            // 애니메이션 추가 필요
+                            // TODO : 애니메이션 추가 필요
                             m_playerSM.ChangeState(EPlayerState.OnActivateWard);
                             print("Vision");
                         }
