@@ -1,0 +1,30 @@
+
+[
+    {
+        "chapterName" : "Chapter 1",
+        "chapterNumber" : 1,
+        "levelList"     : [
+            {
+                "levelNumber" : 0,
+                "isCleared"   : false
+            },
+            {
+                "levelNumber" : 0,
+                "isCleared"   : false
+            },
+            {
+                "levelNumber" : 0,
+                "isCleared"   : false
+            },
+            {
+                "levelNumber" : 0,
+                "isCleared"   : false
+            },
+            {
+                "levelNumber" : 0,
+                "isCleared"   : false
+            }
+        ],
+        "isClearedChapter" : false
+    }
+]
