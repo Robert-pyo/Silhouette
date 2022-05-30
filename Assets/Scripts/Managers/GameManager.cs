@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Player;
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LevelData m_levelData;
     private int currentLevel;
     [SerializeField] private int activatedVisionCount;
+    public List<VibrationGenerator> activatedVisionList;
 
     public UnityAction onItemUsed;
 

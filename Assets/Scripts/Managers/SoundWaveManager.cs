@@ -28,7 +28,7 @@ public class SoundWaveManager : MonoBehaviour
         }
     }
 
-    public void GenerateSoundWave(Transform generator, Vector3 hitPos, Vector3 hitDir, float powerSize)
+    public GameObject GenerateSoundWave(Transform generator, Vector3 hitPos, Vector3 hitDir, float powerSize)
     {
         if (powerSize > 20)
         {
@@ -40,9 +40,11 @@ public class SoundWaveManager : MonoBehaviour
 
         var _obj = Instantiate(soundWave, hitPos, Quaternion.Euler(hitDir));
         _obj.transform.parent = generator;
-        var _visualizer = _obj.transform.Find("Visualizer").gameObject;
+        GameObject _visualizer = _obj.transform.GetChild(0).gameObject;
 
         StartCoroutine(GenerateVisualizer(_obj, _visualizer, powerSize));
+
+        return _obj;
     }
 
     private IEnumerator GenerateVisualizer(GameObject obj, GameObject visualizer, float powerSize)

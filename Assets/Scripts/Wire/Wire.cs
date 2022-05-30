@@ -9,8 +9,6 @@ public class Wire : MonoBehaviour
     public Transform segmentEnd;
     [SerializeField] private List<Transform> m_segmentList = new List<Transform>();
 
-    private ObjectPool<Segment> m_segmentPool;
-
     private Rigidbody m_prevBody;
     private Vector3 m_wireDir;
     private ConfigurableJoint m_configJoint;
@@ -26,7 +24,7 @@ public class Wire : MonoBehaviour
     private void Awake()
     {
         _line = GetComponent<LineRenderer>();
-
+        
         GameManager.Instance.onWireCreate += CreateWire;
     }
 
@@ -45,7 +43,8 @@ public class Wire : MonoBehaviour
             Debug.LogError($"시작점과 끝점이 정해져있지 않습니다.");
             return;
         }
-        print("CreateWire");
+
+        GameManager.Instance.onWireCreate -= CreateWire;
         m_prevBody = segmentStart.GetComponent<Rigidbody>();
         m_wireDir = segmentEnd.position - segmentStart.position;
         m_segmentPerDistance = m_wireDir.magnitude / m_segmentCount;

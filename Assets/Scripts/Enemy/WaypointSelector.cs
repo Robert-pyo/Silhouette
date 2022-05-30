@@ -7,8 +7,9 @@ public class WaypointSelector : MonoBehaviour
     public List<Transform> waypoints;
     
     private int m_index = -1;
+    public int Index => m_index;
 
-    public Transform MoveLoop()
+    public Transform MoveNext()
     {
         if (!PathVerifier()) return null;
 
@@ -17,19 +18,19 @@ public class WaypointSelector : MonoBehaviour
         return waypoints[m_index];
     }
 
-    public Transform MoveNext()
-    {
-        if (!PathVerifier()) return null;
-        
-        if (m_index == waypoints.Count - 1)
-        {
-            // 이미 마지막 인덱스라면
-            return null;
-        }
-
-        m_index++;
-        return waypoints[m_index];
-    }
+    // public Transform MoveNext()
+    // {
+    //     if (!PathVerifier()) return null;
+    //     
+    //     if (m_index == waypoints.Count - 1)
+    //     {
+    //         // 이미 마지막 인덱스라면
+    //         return null;
+    //     }
+    //
+    //     m_index++;
+    //     return waypoints[m_index];
+    // }
 
     public Transform MoveTo(int index)
     {

@@ -9,6 +9,9 @@ TagManager:
   - CameraDirection
   - Wire
   - VisionWard
+  - EnemySound
+  - PlayerSound
+  - VisionSound
   layers:
   - Default
   - TransparentFX

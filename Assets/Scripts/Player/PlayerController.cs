@@ -259,6 +259,7 @@ namespace Player
         {
             isActing = true;
 
+            targetObj.GetComponent<VibrationGenerator>().generatorEnableEvent?.Invoke();
             m_activateVisionWard.Execute();
         }
 
@@ -346,8 +347,10 @@ namespace Player
             // 걸을 때 음파 생성
             if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, float.MaxValue, LayerMask.GetMask("Ground")))
             {
-                SoundWaveManager.Instance.GenerateSoundWave(
+                GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
                     _hit.transform, _hit.point, Vector3.zero, moveSpeed);
+
+                _obj.transform.GetChild(0).tag = "PlayerSound";
             }
         }
 
