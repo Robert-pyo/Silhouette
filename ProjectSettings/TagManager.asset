@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - PushOrPull
+  - VCam
   layers:
   - Default
   - TransparentFX

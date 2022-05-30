@@ -40,7 +40,7 @@ public class SoundWaveManager : MonoBehaviour
 
         var _obj = Instantiate(soundWave, hitPos, Quaternion.Euler(hitDir));
         _obj.transform.parent = generator;
-        var _visualizer = _obj.transform.Find("Visualizer").gameObject;
+        var _visualizer = _obj.transform.GetChild(0).gameObject;
 
         StartCoroutine(GenerateVisualizer(_obj, _visualizer, powerSize));
     }
