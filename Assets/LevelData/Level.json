@@ -5,11 +5,11 @@
         "levelList"   : [
             {
                 "level" : "1-1",
-                "isCleared" : true
+                "isCleared" : false
             },
             {
                 "level" : "1-2",
-                "isCleared" : true
+                "isCleared" : false
             },
             {
                 "level" : "1-3",

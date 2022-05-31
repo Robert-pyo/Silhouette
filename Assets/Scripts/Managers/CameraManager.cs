@@ -39,11 +39,12 @@ public class CameraManager : MonoBehaviour
         }
 
         onCameraChangeEvent.AddListener(ChangeView);
+        SceneController.Instance.onSceneChangeEvent += OnSceneChanged;
 
         m_dicViewArea.TryGetValue(0, out m_currentView);
     }
 
-    private void ChangeView(int areaID)
+    public void ChangeView(int areaID)
     {
         m_currentView.gameObject.SetActive(false);
 

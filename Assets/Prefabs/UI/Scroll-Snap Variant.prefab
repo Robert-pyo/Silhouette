@@ -7,70 +7,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 424562671672198915, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_text
-      value: Chapter 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 818572111014380985, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 818572111014380985, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 818572111014380985, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 818572111014380985, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1498387895866864955, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_text
-      value: Chapter 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108201087769964675, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_text
-      value: Chapter 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2603720946045072920, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_text
-      value: Chapter 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2615319402219802714, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2615319402219802714, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2615319402219802714, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2615319402219802714, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883095992526526828, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883095992526526828, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883095992526526828, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883095992526526828, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3252892436986328043, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
       propertyPath: m_Name
       value: Scroll-Snap Variant
@@ -158,42 +94,6 @@ PrefabInstance:
     - target: {fileID: 3252892436986328052, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309851428798554082, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309851428798554082, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309851428798554082, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309851428798554082, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6311603029224241048, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6311603029224241048, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6311603029224241048, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6311603029224241048, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7661310281737891300, guid: a1ec3309957318841a5e68ab2178c627, type: 3}
-      propertyPath: m_text
-      value: Chapter 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1ec3309957318841a5e68ab2178c627, type: 3}

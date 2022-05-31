@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 6437789606838240376}
   - component: {fileID: 6437789606838240379}
   - component: {fileID: 6437789606838240378}
+  - component: {fileID: 2472565614234184732}
   - component: {fileID: 6437789606838240381}
   m_Layer: 12
   m_Name: LevelNode
@@ -114,6 +115,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2472565614234184732
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6437789606838240380}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: -0.0000009536743, z: 0}
 --- !u!114 &6437789606838240381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,6 +142,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPos: {fileID: 6437789606115141422}
   endPos: {fileID: 6437789607004732239}
+  levelData:
+    level: 
+    isCleared: 0
 --- !u!1 &6437789607004732238
 GameObject:
   m_ObjectHideFlags: 0

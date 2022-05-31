@@ -50,7 +50,7 @@ public class LevelManager : MonoBehaviour
         // 세이브 경로 지정
         m_savePath = Path.Combine(Application.dataPath, "LevelData/Level.json");
 
-        // 씬 바뀔 때 레벨 저장해주기
+        // 씬 바뀔 때 레벨 저장해주기(임시)
         SceneController.Instance.onSceneChangeEvent += SaveLevelData;
         SceneController.Instance.onSceneChangeEvent += SyncCurrentLevel;
     }
