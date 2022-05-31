@@ -4,18 +4,24 @@ using UnityEngine;
 
 public class WaypointSelector : MonoBehaviour
 {
-    public List<Transform> waypoints;
+    [System.Serializable]
+    public class EnemyPatrolWay
+    {
+        public List<Transform> waypoints;
+    }
+
+    public List<EnemyPatrolWay> ways = new List<EnemyPatrolWay>();
     
     private int m_index = -1;
     public int Index => m_index;
 
-    public Transform MoveNext()
+    public Transform MoveNext(int selectWayNumber)
     {
         if (!PathVerifier()) return null;
 
-        m_index = (m_index + 1) % waypoints.Count;
+        m_index = (m_index + 1) % ways[selectWayNumber].waypoints.Count;
 
-        return waypoints[m_index];
+        return ways[selectWayNumber].waypoints[m_index];
     }
 
     // public Transform MoveNext()
@@ -32,11 +38,11 @@ public class WaypointSelector : MonoBehaviour
     //     return waypoints[m_index];
     // }
 
-    public Transform MoveTo(int index)
+    public Transform MoveTo(int selectWayNumber, int index)
     {
         if (!PathVerifier()) return null;
 
-        if (index >= waypoints.Count || index < 0)
+        if (index >= ways[selectWayNumber].waypoints.Count || index < 0)
         {
             //Debug.LogError("이동하려는 인덱스가 존재하지 않습니다.");
             return null;
@@ -44,12 +50,12 @@ public class WaypointSelector : MonoBehaviour
 
         m_index = index;
         
-        return waypoints[index];
+        return ways[selectWayNumber].waypoints[m_index];
     }
 
     private bool PathVerifier()
     {
-        if (waypoints.Count == 0)
+        if (ways.Count == 0)
         {
             //Debug.LogError("등록된 Waypoint가 존재하지 않습니다.");
             return false;

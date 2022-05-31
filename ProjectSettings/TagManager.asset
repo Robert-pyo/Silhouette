@@ -12,6 +12,7 @@ TagManager:
   - EnemySound
   - PlayerSound
   - VisionSound
+  - VCAM
   layers:
   - Default
   - TransparentFX

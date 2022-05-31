@@ -32,7 +32,8 @@ public class Soldier : Enemy
 
         // 커맨드
         m_movementCommand = new NavMovement(m_agent, MoveSpeed, RotateSpeed);
-        
+        m_targetFinder = new SoundFirstPriorityTargetFinder(this);
+
         // 아웃라인
         m_outline = gameObject.AddComponent<Outline>();
         m_outline.enabled = true;
@@ -63,8 +64,10 @@ public class Soldier : Enemy
                 m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Trace:
+                m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Sneak:
+                m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Attack:
                 break;

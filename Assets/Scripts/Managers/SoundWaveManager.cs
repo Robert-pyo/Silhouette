@@ -49,7 +49,9 @@ public class SoundWaveManager : MonoBehaviour
 
     private IEnumerator GenerateVisualizer(GameObject obj, GameObject visualizer, float powerSize)
     {
+        if (!visualizer) yield break;
         yield return StartCoroutine(StartVisualizer(visualizer, powerSize));
+        if (!visualizer) yield break;
         yield return StartCoroutine(ReleaseVisible(visualizer));
         Destroy(obj);
     }
@@ -60,7 +62,7 @@ public class SoundWaveManager : MonoBehaviour
         if (_visualizerDuration < 0.3f) _visualizerDuration = 0.3f;
         float _visualizerRetainedTime = 0f;
 
-        while (visualizer.transform.localScale.x < powerSize)
+        while (visualizer && visualizer.transform.localScale.x < powerSize)
         {
             visualizer.transform.localScale += Vector3.one * 0.2f;
             yield return new WaitForSeconds(0.01f);
@@ -75,7 +77,7 @@ public class SoundWaveManager : MonoBehaviour
 
     private IEnumerator ReleaseVisible(GameObject visualizer)
     {
-        while (visualizer.transform.localScale.x > 0.1f)
+        while (visualizer && visualizer.transform.localScale.x > 0.1f)
         {
             visualizer.transform.localScale -= Vector3.one * 0.2f;
             yield return new WaitForSeconds(0.01f);

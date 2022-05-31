@@ -30,6 +30,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
     protected EnemyMovement m_movementCommand;
     public WaypointSelector waypointSelector;
 
+    [Header("TargetInfo")]
+    public Transform target;
+    protected TargetFinder m_targetFinder;
+
     [Header("Sound Wave")]
     [SerializeField] protected Transform m_groundCheckTransform;
 
@@ -55,6 +59,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
     public abstract void Attack();
 
     public abstract void UpdateAnimation();
+
+    public virtual void FindTarget()
+    {
+        target = m_targetFinder.FindTarget();
+        print(target);
+    }
 
     public void Die()
     {
