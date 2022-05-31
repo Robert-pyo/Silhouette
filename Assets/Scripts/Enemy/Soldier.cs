@@ -9,8 +9,16 @@ public class Soldier : Enemy
 {
     private EnemyAI m_ai;
 
+    [Header("Attack Info")]
+    [SerializeField] private Transform m_attackPos;
+
+    [SerializeField] private GameObject m_attackFx;
+
+    private WaitForSeconds m_attackWaitTime;
+
     private static readonly int Velocity = Animator.StringToHash("Velocity");
     private static readonly int OnIdle = Animator.StringToHash("OnIdle");
+    private static readonly int OnAttack = Animator.StringToHash("OnAttack");
 
     private void Awake()
     {
@@ -20,7 +28,7 @@ public class Soldier : Enemy
         m_enemyAnim = GetComponentInChildren<Animator>();
 
         // 적 정보
-        m_curHp = m_data.maxHp;
+        m_curHp = (short)m_data.maxHp;
         
         waypointSelector = FindObjectOfType<WaypointSelector>();
         if (!waypointSelector)
@@ -38,11 +46,15 @@ public class Soldier : Enemy
         m_outline = gameObject.AddComponent<Outline>();
         m_outline.enabled = true;
         m_outline.OutlineMode = Outline.Mode.SilhouetteOnly;
+        
+        // 공격
+        m_attackWaitTime = new WaitForSeconds(0.5f);
     }
 
     private void Update()
     {
         UpdateAnimation();
+        m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
     }
 
     public override void Move(Vector3 dest)
@@ -50,9 +62,25 @@ public class Soldier : Enemy
         m_movementCommand.Execute(dest);
     }
     
-    public override void Attack()
+    public override IEnumerator Attack()
     {
-        
+        while (true)
+        {
+            GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
+                transform, m_attackPos.position, Vector3.zero, 10f);
+            _obj.transform.GetChild(0).tag = "EnemySound";
+
+            GameObject _muzzleFx = Instantiate(m_attackFx, m_attackPos.position, Quaternion.Euler(m_attackPos.eulerAngles));
+            Destroy(_muzzleFx, 1f);
+            
+            if (Physics.Raycast(transform.position, transform.forward, out var _hit, float.MaxValue, LayerMask.GetMask("Player", "Interactable")))
+            {
+                IDamageable _damageable = _hit.transform.GetComponent<IDamageable>();
+                _damageable.Hit(Data.attackDamage);
+            }
+
+            yield return m_attackWaitTime;
+        }
     }
 
     public override void UpdateAnimation()
@@ -60,16 +88,16 @@ public class Soldier : Enemy
         switch (m_ai.currentState)
         {
             case EEnemyState.Idle:
+                m_enemyAnim.SetBool(OnAttack, false);
+                break;
             case EEnemyState.Patrol:
-                m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Trace:
-                m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Sneak:
-                m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
                 break;
             case EEnemyState.Attack:
+                m_enemyAnim.SetBool(OnAttack, true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

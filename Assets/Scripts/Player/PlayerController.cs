@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using MonsterLove.StateMachine;
 using UnityEngine;
 using UnityEngine.AI;
@@ -46,9 +46,9 @@ namespace Player
         public float MoveSpeed => moveSpeed;
 
         [SerializeField] private ushort m_maxHp;
-        [SerializeField] private ushort m_curHp;
+        [SerializeField] private short m_curHp;
         public ushort MaxHp => m_maxHp;
-        public ushort CurHp => m_curHp;
+        public short CurHp => m_curHp;
         
         [Range(0, 1)] public float walkSpeedReduction;
         [Range(0, 1)] public float crouchSpeedReduction;
@@ -71,6 +71,7 @@ namespace Player
 
         [Header("For Link To Vision Ward")]
         public Wire wire;
+        public List<Wire> wireInstances = new List<Wire>();
         public Transform wireTiedPosition;
         private InteractionCommand m_activateVisionWard;
 
@@ -115,6 +116,7 @@ namespace Player
 
         private void Update()
         {
+            if (isDead) return;
             //Interaction
             isInteractable = rayDetection.CanInteract();
             
@@ -374,13 +376,14 @@ namespace Player
 
         public Wire EnableWire()
         {
-            GameObject _obj = Instantiate(wire.gameObject, Vector3.zero, Quaternion.identity);
-            return _obj.GetComponent<Wire>();
+            Wire _obj = Instantiate(wire, Vector3.zero, Quaternion.identity);
+            wireInstances.Add(_obj);
+            return _obj;
         }
         
         public void Hit(ushort damage)
         {
-            m_curHp -= damage;
+            m_curHp -= (short)damage;
 
             if (m_curHp == 0)
             {
@@ -396,6 +399,7 @@ namespace Player
             if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
             {
                 // TODO : 게임 오버 처리
+                print("게임 오버");
             }
         }
     }

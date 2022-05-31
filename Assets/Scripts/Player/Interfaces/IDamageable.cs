@@ -5,7 +5,7 @@ using UnityEngine;
 public interface IDamageable
 {
     public ushort MaxHp { get; }
-    public ushort CurHp { get; }
+    public short CurHp { get; }
     
     public void Hit(ushort damage);
     public void Die();

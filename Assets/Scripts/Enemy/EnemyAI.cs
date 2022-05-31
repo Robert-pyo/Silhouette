@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,9 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private float m_delayTimeIdleToPatrol;
     private float m_idleTimeTaken;
+    private float m_attackTimeTaken;
+    
+    private static readonly int OnAttack = Animator.StringToHash("OnAttack");
     
     //public UnityAction stateChangeEvent;
 
@@ -33,12 +37,6 @@ public class EnemyAI : MonoBehaviour
         m_owner = GetComponent<Enemy>();
 
         m_enemyState.ChangeState(EEnemyState.Idle);
-    }
-
-    private void Update()
-    {
-        // 타겟 찾기
-        m_owner.FindTarget();
     }
 
     private void Idle_Enter()
@@ -55,6 +53,8 @@ public class EnemyAI : MonoBehaviour
             m_enemyState.ChangeState(EEnemyState.Patrol);
             return;
         }
+        
+        m_owner.FindTarget();
 
         // TODO : 소리가 감지되었다면 진원지로 Trace
         if (m_owner.target)
@@ -70,6 +70,7 @@ public class EnemyAI : MonoBehaviour
     private void Patrol_Update()
     {
         // TODO : 소리가 감지되었다면 진원지로 Trace
+        m_owner.FindTarget();
         if (m_owner.target)
         {
             m_enemyState.ChangeState(EEnemyState.Trace);
@@ -86,7 +87,6 @@ public class EnemyAI : MonoBehaviour
             m_owner.Move(m_owner.waypointSelector.MoveNext(0).position);
         }
     }
-
     private void Patrol_Exit()
     {
         m_owner.Agent.ResetPath();
@@ -98,12 +98,47 @@ public class EnemyAI : MonoBehaviour
     }
     private void Trace_Update()
     {
+        m_owner.FindTarget();
         if (!m_owner.target)
         {
             m_enemyState.ChangeState(EEnemyState.Idle);
             return;
         }
 
-        m_owner.Move(m_owner.target.position);
+        Vector3 _targetPosition = m_owner.target.position;
+        m_owner.Move(_targetPosition);
+
+        if (!m_owner.target.CompareTag("Player") && !m_owner.target.CompareTag("VisionWard")) return;
+        
+        m_owner.targetDistance = (_targetPosition - m_owner.transform.position).sqrMagnitude;
+        float _attackRange = m_owner.Data.attackRange * m_owner.Data.attackRange;
+        if (_attackRange > m_owner.targetDistance)
+        {
+            m_enemyState.ChangeState(EEnemyState.Attack);
+        }
+    }
+
+    private void Attack_Enter()
+    {
+        currentState = m_enemyState.State;
+
+        m_owner.Agent.ResetPath();
+        
+        m_owner.transform.LookAt(m_owner.target);
+        
+        m_owner.StartCoroutine(nameof(m_owner.Attack));
+    }
+    private void Attack_Update()
+    {
+        m_attackTimeTaken += Time.deltaTime;
+        if (m_attackTimeTaken > 1f)
+        {
+            m_enemyState.ChangeState(EEnemyState.Idle);
+        }
+    }
+    private void Attack_Exit()
+    {
+        m_attackTimeTaken = 0f;
+        m_owner.StopCoroutine(nameof(m_owner.Attack));
     }
 }

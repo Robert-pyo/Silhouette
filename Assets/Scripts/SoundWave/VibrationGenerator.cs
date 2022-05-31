@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class VibrationGenerator : MonoBehaviour
+public class VibrationGenerator : MonoBehaviour, IDamageable
 {
     [SerializeField] private Transform m_genPoint;
     [SerializeField] private float m_power;
@@ -64,5 +64,26 @@ public class VibrationGenerator : MonoBehaviour
     private void ActivateGenerator()
     {
         m_isActivated = true;
+    }
+
+    [SerializeField] private ushort m_maxHp;
+    [SerializeField] private short m_curHp;
+    public ushort MaxHp => m_maxHp;
+    public short CurHp => m_curHp;
+    
+    public void Hit(ushort damage)
+    {
+        m_curHp -= (short) damage;
+
+        if (m_curHp <= 0)
+        {
+            m_isActivated = false;
+            GameManager.Instance.OnWardDisabled();
+        }
+    }
+
+    public void Die()
+    {
+        throw new System.NotImplementedException();
     }
 }

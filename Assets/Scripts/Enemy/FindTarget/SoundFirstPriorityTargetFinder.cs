@@ -38,7 +38,7 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             // 두번째로 VisionSound 검출
             if (m_colliders[i].CompareTag("VisionSound"))
             {
-                _target = m_colliders[i].transform;
+                _target = m_colliders[i].transform.root;
                 break;
             }
             

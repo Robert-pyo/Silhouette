@@ -12,13 +12,14 @@ public enum EEnemyType
 public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 {
     protected Animator m_enemyAnim;
+    public Animator EnemyAnimator => m_enemyAnim;
     [SerializeField] protected EnemyData m_data;
     public EnemyData Data => m_data;
 
     [Header("Enemy Info")]
-    [SerializeField] protected ushort m_curHp;
+    [SerializeField] protected short m_curHp;
     public ushort MaxHp => m_data.maxHp;
-    public ushort CurHp => m_curHp;
+    public short CurHp => m_curHp;
 
     [SerializeField] private float m_moveSpeed;
     [SerializeField] private float m_rotateSpeed;
@@ -32,6 +33,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     [Header("TargetInfo")]
     public Transform target;
+    public float targetDistance;
     protected TargetFinder m_targetFinder;
 
     [Header("Sound Wave")]
@@ -46,7 +48,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     public void Hit(ushort damage)
     {
-        m_curHp -= damage;
+        m_curHp -= (short)damage;
 
         if (m_curHp != 0) return;
         
@@ -56,14 +58,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     public abstract void Move(Vector3 dest);
 
-    public abstract void Attack();
+    public abstract IEnumerator Attack();
 
     public abstract void UpdateAnimation();
 
     public virtual void FindTarget()
     {
         target = m_targetFinder.FindTarget();
-        print(target);
     }
 
     public void Die()
@@ -86,5 +87,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
             _obj.transform.GetChild(0).tag = "EnemySound";
         }
+    }
+
+    public void GenerateSoundWaveAt(Transform genTransform, float power)
+    {
+        GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
+            transform, genTransform.position, Vector3.zero, power);
+
+        _obj.transform.GetChild(0).tag = "EnemySound";
     }
 }
