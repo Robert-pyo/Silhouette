@@ -20,6 +20,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
     [SerializeField] protected short m_curHp;
     public ushort MaxHp => m_data.maxHp;
     public short CurHp => m_curHp;
+    public bool IsDead => isDead;
 
     [SerializeField] private float m_moveSpeed;
     [SerializeField] private float m_rotateSpeed;
@@ -44,7 +45,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     protected Outline m_outline;
 
-    private static readonly int IsDead = Animator.StringToHash("IsDead");
+    private static readonly int HashIsDead = Animator.StringToHash("IsDead");
 
     public void Hit(ushort damage)
     {
@@ -69,7 +70,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     public void Die()
     {
-        m_enemyAnim.SetBool(IsDead, true);
+        m_enemyAnim.SetBool(HashIsDead, true);
         // 현재 OnDead 애니메이션이 종료되었다면
         if (m_enemyAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {

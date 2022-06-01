@@ -49,7 +49,8 @@ namespace Player
         [SerializeField] private short m_curHp;
         public ushort MaxHp => m_maxHp;
         public short CurHp => m_curHp;
-        
+        public bool IsDead => isDead;
+
         [Range(0, 1)] public float walkSpeedReduction;
         [Range(0, 1)] public float crouchSpeedReduction;
 
@@ -85,6 +86,8 @@ namespace Player
 
         public UnityAction interactionPopUpEvent;
         public UnityAction popUpReleaseEvent;
+        
+        public UnityAction<Wire> addWireToWardEvent;
 
         private static readonly int Velocity = Animator.StringToHash("Velocity");
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
@@ -98,6 +101,8 @@ namespace Player
             m_playerSM = StateMachine<EPlayerState>.Initialize(this);
 
             m_input = PlayerInput.Instance;
+
+            m_curHp = (short)m_maxHp;
             
             //Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
@@ -109,8 +114,7 @@ namespace Player
 
             // Command
             m_activateVisionWard = new VisionWardInteraction(this);
-
-
+            
             m_playerSM.ChangeState(EPlayerState.Idle);
         }
 
@@ -378,6 +382,7 @@ namespace Player
         {
             Wire _obj = Instantiate(wire, Vector3.zero, Quaternion.identity);
             wireInstances.Add(_obj);
+            addWireToWardEvent?.Invoke(_obj);
             return _obj;
         }
         

@@ -73,9 +73,10 @@ public class Soldier : Enemy
             GameObject _muzzleFx = Instantiate(m_attackFx, m_attackPos.position, Quaternion.Euler(m_attackPos.eulerAngles));
             Destroy(_muzzleFx, 1f);
             
-            if (Physics.Raycast(transform.position, transform.forward, out var _hit, float.MaxValue, LayerMask.GetMask("Player", "Interactable")))
+            if (Physics.Raycast(transform.position, transform.forward, out var _hit, Data.attackRange, LayerMask.GetMask("Player", "Interactable")))
             {
                 IDamageable _damageable = _hit.transform.GetComponent<IDamageable>();
+                if (_damageable.IsDead) break;
                 _damageable.Hit(Data.attackDamage);
             }
 

@@ -11,6 +11,8 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
     
     [SerializeField] private bool m_isActivated;
 
+    [SerializeField] private Wire m_linkedWire;
+
     public UnityAction generatorEnableEvent;
 
     private Outline m_outline;
@@ -27,6 +29,7 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
         generatorEnableEvent += ActivateGenerator;
 
         GameManager.Instance.onVisionWardActivated += ActivateVisionWard;
+        GameManager.Instance.player.addWireToWardEvent += AddWireToWard;
     }
 
     private void ActivateVisionWard()
@@ -43,7 +46,11 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
     {
         if (m_isActivated) return;
         
+        Destroy(m_linkedWire.gameObject);
+        m_linkedWire = null;
+        
         StopCoroutine(nameof(GenerateVibration));
+        m_outline.enabled = false;
         GameManager.Instance.onVisionWardDeactivated -= DeactivateVisionWard;
         GameManager.Instance.onVisionWardActivated += ActivateVisionWard;
     }
@@ -66,11 +73,17 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
         m_isActivated = true;
     }
 
+    private void AddWireToWard(Wire linkedWire)
+    {
+        m_linkedWire = linkedWire;
+    }
+
     [SerializeField] private ushort m_maxHp;
     [SerializeField] private short m_curHp;
     public ushort MaxHp => m_maxHp;
     public short CurHp => m_curHp;
-    
+    public bool IsDead => !m_isActivated;
+
     public void Hit(ushort damage)
     {
         m_curHp -= (short) damage;

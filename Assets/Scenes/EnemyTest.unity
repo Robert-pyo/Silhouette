@@ -785,6 +785,7 @@ MonoBehaviour:
   m_power: 13
   m_delayTime: 5
   m_isActivated: 0
+  m_linkedWire: {fileID: 0}
   m_maxHp: 1
   m_curHp: 1
 --- !u!4 &431695629
@@ -1055,6 +1056,36 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9b9ff57fbb4e4e94b96ba48678697fbe, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2285e25ef19f04e4ab01a25c9027814c, type: 3}
+--- !u!1 &517701699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 517701700}
+  m_Layer: 0
+  m_Name: ======== Waves ========
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &517701700
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 517701699}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &543565756
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1463,7 +1494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ce693b87435c2d46881728045da1df3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundWave: {fileID: 7059438747477111696, guid: 02c1320adcd910e4e9a209875dd144e4, type: 3}
+  soundWavePrefab: {fileID: 6706784918625826246, guid: 02c1320adcd910e4e9a209875dd144e4, type: 3}
 --- !u!114 &679643301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2652,6 +2683,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4362738547019599390, guid: 4f895e5319bc6964698e35bbe2965bc9, type: 3}
+      propertyPath: m_maxHp
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362738547019599390, guid: 4f895e5319bc6964698e35bbe2965bc9, type: 3}
       propertyPath: mouseCursor
       value: 
       objectReference: {fileID: 2060084493}
@@ -3012,6 +3047,7 @@ MonoBehaviour:
   m_power: 13
   m_delayTime: 5
   m_isActivated: 0
+  m_linkedWire: {fileID: 0}
   m_maxHp: 0
   m_curHp: 0
 --- !u!4 &1244119437
@@ -3022,7 +3058,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244119432}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.5, y: 1, z: 1.5}
+  m_LocalPosition: {x: 0.38, y: 1, z: 1.41}
   m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_Children:
   - {fileID: 1825955776}
@@ -4045,6 +4081,7 @@ MonoBehaviour:
   m_power: 13
   m_delayTime: 5
   m_isActivated: 0
+  m_linkedWire: {fileID: 0}
   m_maxHp: 0
   m_curHp: 0
 --- !u!4 &1742996461

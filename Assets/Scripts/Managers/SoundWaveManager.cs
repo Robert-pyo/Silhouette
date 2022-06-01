@@ -7,9 +7,10 @@ public class SoundWaveManager : MonoBehaviour
     private static SoundWaveManager m_instance;
     public static SoundWaveManager Instance => m_instance;
 
-    public GameObject soundWave;
-    private ParticleSystem m_soundWaveFx;
+    public SoundWaveFx soundWavePrefab;
     private GameObject m_soundVisualizer;
+
+    private ObjectPool<SoundWaveFx> m_soundWavePool;
 
     private void Awake()
     {
@@ -22,10 +23,20 @@ public class SoundWaveManager : MonoBehaviour
         m_instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (soundWave)
-        {
-            m_soundWaveFx = soundWave.GetComponentInChildren<ParticleSystem>();
-        }
+        m_soundWavePool = new ObjectPool<SoundWaveFx>(
+            createFunc: () => Instantiate(soundWavePrefab, new Vector3(1000f, 1000f, 1000f), Quaternion.identity),
+            actionOnGet: (soundFx) =>
+            {
+                soundFx.gameObject.SetActive(true);
+            },
+            actionOnRelease: (soundFx) =>
+            {
+                soundFx.gameObject.SetActive(false);
+            },
+            actionOnDestroy: (soundFx) =>
+            {
+                Destroy(soundFx.gameObject);
+            }, maxSize: 50);
     }
 
     public GameObject GenerateSoundWave(Transform generator, Vector3 hitPos, Vector3 hitDir, float powerSize)
@@ -34,26 +45,33 @@ public class SoundWaveManager : MonoBehaviour
         {
             powerSize = 20;
         }
+
+        var _soundFx = m_soundWavePool.Get();
         
-        ParticleSystem.MainModule _particleMain = m_soundWaveFx.main;
+        ParticleSystem.MainModule _particleMain = _soundFx.soundWaveFx.main;
         _particleMain.startSize = powerSize;
+        
+        _soundFx.soundVelocity = powerSize;
+        _soundFx.transform.position = hitPos;
+        _soundFx.transform.localRotation = Quaternion.Euler(hitDir);
+        _soundFx.transform.parent = generator;
+        
+        GameObject _visualizer = _soundFx.transform.GetChild(0).gameObject;
+        _visualizer.tag = "Untagged";
 
-        var _obj = Instantiate(soundWave, hitPos, Quaternion.Euler(hitDir));
-        _obj.transform.parent = generator;
-        GameObject _visualizer = _obj.transform.GetChild(0).gameObject;
+        StartCoroutine(GenerateVisualizer(_soundFx, _visualizer, powerSize));
 
-        StartCoroutine(GenerateVisualizer(_obj, _visualizer, powerSize));
-
-        return _obj;
+        return _soundFx.gameObject;
     }
 
-    private IEnumerator GenerateVisualizer(GameObject obj, GameObject visualizer, float powerSize)
+    private IEnumerator GenerateVisualizer(SoundWaveFx soundFx, GameObject visualizer, float powerSize)
     {
         if (!visualizer) yield break;
         yield return StartCoroutine(StartVisualizer(visualizer, powerSize));
         if (!visualizer) yield break;
         yield return StartCoroutine(ReleaseVisible(visualizer));
-        Destroy(obj);
+        
+        m_soundWavePool.Release(soundFx);
     }
 
     private IEnumerator StartVisualizer(GameObject visualizer, float powerSize)

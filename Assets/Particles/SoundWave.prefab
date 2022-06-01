@@ -104,6 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7059438747477111697}
+  - component: {fileID: 6706784918625826246}
   m_Layer: 9
   m_Name: SoundWave
   m_TagString: Untagged
@@ -127,6 +128,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6706784918625826246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7059438747477111696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 122408f1392cbf8438b890da56737a6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundVelocity: 0
+  soundWaveFx: {fileID: 5240740384384439804}
 --- !u!1001 &7749773746582198417
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -184,12 +199,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2537325071222525293, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}
 --- !u!4 &5240740384384439682 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2537325071222525203, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}
+  m_PrefabInstance: {fileID: 7749773746582198417}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5240740384384439804 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2537325071222525293, guid: 0bdbf1bb291d46a449b4544f06bc467c, type: 3}
   m_PrefabInstance: {fileID: 7749773746582198417}
   m_PrefabAsset: {fileID: 0}

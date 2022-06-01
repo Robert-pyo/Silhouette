@@ -8,11 +8,14 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
 
     private Collider[] m_colliders;
     private int m_collideCount;
+    private SoundWaveFx m_soundFx;
+
+    private Transform m_lastDetectedTarget;
 
     public SoundFirstPriorityTargetFinder(Enemy enemy)
     {
         m_enemy = enemy;
-        m_colliders = new Collider[10];
+        m_colliders = new Collider[20];
     }
     
     public override Transform FindTarget()
@@ -32,6 +35,7 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             if (m_colliders[i].CompareTag("PlayerSound"))
             {
                 _target = m_colliders[i].transform;
+                m_lastDetectedTarget = _target;
                 break;
             }
 
@@ -39,13 +43,30 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             if (m_colliders[i].CompareTag("VisionSound"))
             {
                 _target = m_colliders[i].transform.root;
+                m_lastDetectedTarget = _target;
                 break;
             }
             
             // 위에서 걸러지지 않았다면
             _target = m_colliders[i].transform;
+            m_lastDetectedTarget = _target;
             break;
         }
+        
+        if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
+        {
+            Collider[] _results = new Collider[1];
+            int _count = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.attackRange, _results, LayerMask.GetMask("Player"));
+
+            if (_count > 0)
+            {
+                _target = _results[0].transform;
+                m_lastDetectedTarget = _target;
+            }
+        }
+        
+        if (!_target || _target.CompareTag("VisionWard") || _target.CompareTag("Player")) return _target;
+        m_soundFx = _target.parent.GetComponent<SoundWaveFx>();
 
         if (_target && _target.CompareTag("PlayerSound"))
         {
@@ -54,10 +75,12 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
 
             if (_count > 0)
             {
-                return _results[0].transform;
+                _target = _results[0].transform;
+                m_lastDetectedTarget = _target;
             }
         }
 
-        return _target;
+        // 감지된 소리가 너무 작다면 null 반환
+        return m_soundFx.soundVelocity < 3f ? null : _target;
     }
 }
