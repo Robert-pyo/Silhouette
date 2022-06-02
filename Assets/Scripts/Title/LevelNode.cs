@@ -8,7 +8,7 @@ public class LevelNode : MonoBehaviour
     public Transform endPos;
 
     // 씬 이동에 쓰일 레벨 정보
-    public LevelData levelData;
+    public LevelInfo levelData;
     [SerializeField] private bool m_isPrevLevelCleared;
     private bool m_isStartingLevel;
 
@@ -18,7 +18,7 @@ public class LevelNode : MonoBehaviour
     {
         bool _isLevelSelected = false;
 
-        foreach (ChapterData _chData in LevelManager.Instance.chapterDataList)
+        foreach (ChapterInfo _chData in LevelManager.Instance.chapterDataList)
         {
             for (int i = 0; i < _chData.levelList.Count; ++i)
             {

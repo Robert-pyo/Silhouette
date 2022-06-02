@@ -13,8 +13,6 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
     [SerializeField] private Wire m_linkedWire;
 
-    public UnityAction generatorEnableEvent;
-
     private Outline m_outline;
 
     private void Awake()
@@ -26,7 +24,6 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
         m_outline.OutlineColor = Color.cyan;
 
         m_isActivated = false;
-        generatorEnableEvent += ActivateGenerator;
 
         GameManager.Instance.onVisionWardActivated += ActivateVisionWard;
         GameManager.Instance.player.addWireToWardEvent += AddWireToWard;
@@ -34,8 +31,9 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
     private void ActivateVisionWard()
     {
-        if (!m_isActivated) return;
-        
+        if (m_isActivated) return;
+
+        m_isActivated = true;
         StartCoroutine(nameof(GenerateVibration));
         m_outline.enabled = true;
         GameManager.Instance.onVisionWardActivated -= ActivateVisionWard;
@@ -44,8 +42,10 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
     private void DeactivateVisionWard()
     {
-        if (m_isActivated) return;
-        
+        if (!m_isActivated) return;
+
+        m_isActivated = false;
+
         Destroy(m_linkedWire.gameObject);
         m_linkedWire = null;
         
@@ -66,11 +66,6 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
             
             yield return new WaitForSeconds(m_delayTime);
         }
-    }
-
-    private void ActivateGenerator()
-    {
-        m_isActivated = true;
     }
 
     private void AddWireToWard(Wire linkedWire)

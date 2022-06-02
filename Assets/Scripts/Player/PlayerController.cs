@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MonsterLove.StateMachine;
 using UnityEngine;
@@ -161,7 +161,6 @@ namespace Player
                         {
                             // TODO : 애니메이션 추가 필요
                             m_playerSM.ChangeState(EPlayerState.OnActivateWard);
-                            print("Vision");
                         }
                         break;
 
@@ -263,9 +262,14 @@ namespace Player
 
         private void OnActivateWard_Enter()
         {
+            if (!targetObj.GetComponent<VibrationGenerator>().IsDead)
+            {
+                m_playerSM.ChangeState(EPlayerState.Idle);
+                return;
+            }
+
             isActing = true;
 
-            targetObj.GetComponent<VibrationGenerator>().generatorEnableEvent?.Invoke();
             m_activateVisionWard.Execute();
         }
 

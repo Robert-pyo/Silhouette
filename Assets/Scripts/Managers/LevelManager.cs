@@ -6,18 +6,20 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class ChapterData
+public class ChapterInfo
 {
     public string chapterName;
 
-    public List<LevelData> levelList;
+    public List<LevelInfo> levelList;
 
     public bool isChapterCleared;
 }
 
 [System.Serializable]
-public class LevelData
+public class LevelInfo
 {
+    public LevelData data;
+
     public string level;
 
     public bool isCleared;
@@ -31,10 +33,10 @@ public class LevelManager : MonoBehaviour
     private string m_savePath;
 
     // 현재 레벨
-    public LevelData currentLevel;
+    public LevelInfo currentLevel;
 
     // 전체 레벨 상황
-    public List<ChapterData> chapterDataList;
+    public List<ChapterInfo> chapterDataList;
 
     private void Awake()
     {
@@ -59,9 +61,9 @@ public class LevelManager : MonoBehaviour
     {
         bool _isLevelSelected = false;
         
-        foreach (ChapterData _data in chapterDataList)
+        foreach (ChapterInfo _data in chapterDataList)
         {
-            foreach (LevelData _lvData in _data.levelList)
+            foreach (LevelInfo _lvData in _data.levelList)
             {
                 if (SceneController.Instance.currentScene.name != _lvData.level) continue;
 
@@ -90,6 +92,6 @@ public class LevelManager : MonoBehaviour
     {
         string _json = File.ReadAllText(m_savePath);
 
-        chapterDataList = JsonMapper.ToObject<List<ChapterData>>(_json);
+        chapterDataList = JsonMapper.ToObject<List<ChapterInfo>>(_json);
     }
 }

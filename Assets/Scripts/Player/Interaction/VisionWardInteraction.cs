@@ -19,6 +19,6 @@ public class VisionWardInteraction : InteractionCommand
         _wire.segmentStart = controller.targetObj.transform;
         _wire.segmentEnd = controller.wireTiedPosition;
 
-        // TODO : ÀÌÆåÆ®?
+        // TODO : ì´í™íŠ¸?
     }
 }

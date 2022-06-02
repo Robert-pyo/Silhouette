@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         }
 
+        SceneController.Instance.onSceneChangeEvent += SyncCurrentLevel;
+
+        if (!m_levelData) return;
         currentLevel = m_levelData.level;
         activatedVisionCount = 0;
     }
@@ -53,6 +56,12 @@ public class GameManager : MonoBehaviour
     {
         onVisionWardDeactivated?.Invoke();
         activatedVisionCount--;
+    }
+
+    private void SyncCurrentLevel()
+    {
+        print("SyncCurrentLevel Called!");
+        m_levelData = LevelManager.Instance.currentLevel.data;
     }
 
     public void ExitGame()
