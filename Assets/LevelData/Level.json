@@ -8,7 +8,7 @@
                     "name" : "1-1",
                     "hideFlags" : 0,
                     "level"     : 1,
-                    "shouldActivateVisionWardCount" : 2,
+                    "shouldActivateVisionWardCount" : 1,
                     "killEnemyCount"                : 0
                 },
                 "level" : "1-1",

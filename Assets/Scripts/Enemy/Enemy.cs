@@ -47,16 +47,6 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     private static readonly int HashIsDead = Animator.StringToHash("IsDead");
 
-    public void Hit(ushort damage)
-    {
-        m_curHp -= (short)damage;
-
-        if (m_curHp != 0) return;
-        
-        isDead = true;
-        Die();
-    }
-
     public abstract void Move(Vector3 dest);
 
     public abstract IEnumerator Attack();
@@ -68,19 +58,30 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
         target = m_targetFinder.FindTarget();
     }
 
+    public void Hit(ushort damage)
+    {
+        m_curHp -= (short)damage;
+
+        if (m_curHp != 0) return;
+
+        isDead = true;
+        Die();
+    }
+
     public void Die()
     {
         m_enemyAnim.SetBool(HashIsDead, true);
-        // ÇöÀç OnDead ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ Á¾·áµÇ¾ú´Ù¸é
+        // í˜„ì¬ OnDead ì• ë‹ˆë©”ì´ì…˜ì´ ì¢…ë£Œë˜ì—ˆë‹¤ë©´
         if (m_enemyAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         {
-            // TODO : °ÔÀÓ ¿À¹ö Ã³¸®
+            // ì£½ê³  ì• ë‹ˆë©”ì´ì…˜ ì¶œë ¥ì´ ëë‚¬ë‹¤ë©´ ì‚­ì œ
+            Destroy(gameObject);
         }
     }
 
     public void GenerateWalkSoundWave()
     {
-        // °ÉÀ» ¶§ À½ÆÄ »ı¼º
+        // ê±¸ì„ ë•Œ ìŒíŒŒ ìƒì„±
         if (Physics.Raycast(m_groundCheckTransform.position, Vector3.down, out var _hit, float.MaxValue, LayerMask.GetMask("Ground")))
         {
             GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(

@@ -42,6 +42,7 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
     private void DeactivateVisionWard()
     {
+        print("deactivate");
         if (!m_isActivated) return;
 
         m_isActivated = false;
@@ -85,7 +86,6 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
         if (m_curHp <= 0)
         {
-            m_isActivated = false;
             GameManager.Instance.OnWardDisabled();
         }
     }

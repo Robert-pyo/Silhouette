@@ -12,6 +12,8 @@ public enum EEnemyState
     Trace,
     Sneak,
     Attack,
+    Hit,
+    Dead,
 }
 
 [RequireComponent(typeof(Enemy))]
@@ -22,8 +24,11 @@ public class EnemyAI : MonoBehaviour
 
     private Enemy m_owner;
 
+    [Header("Patrol Info")]
     [SerializeField] private float m_delayTimeIdleToPatrol;
+    [SerializeField] private int m_waySelectNumber;
     private float m_idleTimeTaken;
+
     private float m_attackTimeTaken;
     
     private static readonly int OnAttack = Animator.StringToHash("OnAttack");
@@ -33,7 +38,7 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         m_enemyState = StateMachine<EEnemyState>.Initialize(this);
-        // ¼ÒÀ¯ÀÚ ÁöÁ¤
+        // ì†Œìœ ì ì§€ì •
         m_owner = GetComponent<Enemy>();
 
         m_enemyState.ChangeState(EEnemyState.Idle);
@@ -56,7 +61,7 @@ public class EnemyAI : MonoBehaviour
         
         m_owner.FindTarget();
 
-        // TODO : ¼Ò¸®°¡ °¨ÁöµÇ¾ú´Ù¸é Áø¿øÁö·Î Trace
+        // TODO : ì†Œë¦¬ê°€ ê°ì§€ë˜ì—ˆë‹¤ë©´ ì§„ì›ì§€ë¡œ Trace
         if (m_owner.target)
         {
             m_enemyState.ChangeState(EEnemyState.Trace);
@@ -69,7 +74,7 @@ public class EnemyAI : MonoBehaviour
     }
     private void Patrol_Update()
     {
-        // TODO : ¼Ò¸®°¡ °¨ÁöµÇ¾ú´Ù¸é Áø¿øÁö·Î Trace
+        // TODO : ì†Œë¦¬ê°€ ê°ì§€ë˜ì—ˆë‹¤ë©´ ì§„ì›ì§€ë¡œ Trace
         m_owner.FindTarget();
         if (m_owner.target)
         {
@@ -84,7 +89,7 @@ public class EnemyAI : MonoBehaviour
         
         if (m_owner.Agent.remainingDistance < 0.1f)
         {
-            m_owner.Move(m_owner.waypointSelector.MoveNext(0).position);
+            m_owner.Move(m_owner.waypointSelector.MoveNext(m_waySelectNumber).position);
         }
     }
     private void Patrol_Exit()
@@ -122,6 +127,12 @@ public class EnemyAI : MonoBehaviour
     {
         currentState = m_enemyState.State;
 
+        if (m_owner.target.GetComponent<IDamageable>().IsDead)
+        {
+            m_enemyState.ChangeState(EEnemyState.Idle);
+            return;
+        }
+
         m_owner.Agent.ResetPath();
         
         m_owner.transform.LookAt(m_owner.target);
@@ -140,5 +151,29 @@ public class EnemyAI : MonoBehaviour
     {
         m_attackTimeTaken = 0f;
         m_owner.StopCoroutine(nameof(m_owner.Attack));
+    }
+
+    private void Hit_Enter()
+    {
+        currentState = m_enemyState.State;
+    }
+    private void Hit_Exit()
+    {
+
+    }
+
+    private void Dead_Enter()
+    {
+        currentState = m_enemyState.State;
+
+        m_owner.Agent.isStopped = true;
+        m_owner.Agent.ResetPath();
+    }
+    private void Dead_Update()
+    {
+        if (m_owner.EnemyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
+            print($"{name} is Dead");
+        }
     }
 }

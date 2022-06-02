@@ -20,7 +20,6 @@ public enum EPlayerState
     PushAndPull,
     ThrowSomething,
     OnActivateWard,
-    Hit,
     Die,
 }
 
@@ -37,6 +36,7 @@ namespace Player
 
         private Animator m_playerAnim;
 
+        private CapsuleCollider m_collider;
         private Rigidbody m_rigidbody;
         public Rigidbody PlayerRigidbody => m_rigidbody;
 
@@ -82,6 +82,8 @@ namespace Player
         [SerializeField] private Rock rockPrefab;
         [SerializeField] private float throwForce;
         [SerializeField] private Transform startThrowPos;
+        [SerializeField] private float throwDelay;
+        private float m_throwTimeTaken;
         private Vector3 m_projectileDir;
 
         public UnityAction interactionPopUpEvent;
@@ -107,6 +109,7 @@ namespace Player
             //Agent = GetComponent<NavMeshAgent>();
             m_playerAnim = GetComponentInChildren<Animator>();
             m_rigidbody = GetComponent<Rigidbody>();
+            m_collider = GetComponent<CapsuleCollider>();
 
             //m_movement = new RayPlayerWalk(this);
             m_movement = new RigidbodyMovement(this);
@@ -210,6 +213,8 @@ namespace Player
         private void Crouch_Enter()
         {
             moveSpeed = maxMoveSpeed * (1 - crouchSpeedReduction);
+            m_collider.center = new Vector3(0f, 0.6f, 0f);
+            m_collider.height = 1.2f;
         }
 
         private void Crouch_Update()
@@ -225,6 +230,8 @@ namespace Player
         {
             //Agent.speed = moveSpeed;
             m_playerAnim.SetBool(IsCrouching, false);
+            m_collider.center = Vector3.up;
+            m_collider.height = 2f;
         }
 
         private void PushAndPull_Enter()
@@ -286,17 +293,6 @@ namespace Player
             isActing = false;
         }
 
-        private void Hit_Enter()
-        {
-            // 맞았을 때 처리
-            m_input.playerControllerInputBlocked = true;
-        }
-
-        private void Hit_Exit()
-        {
-            m_input.playerControllerInputBlocked = false;
-        }
-
         private void Die_Enter()
         {
             // 죽을 때 처리
@@ -313,6 +309,17 @@ namespace Player
 
         private void ReadyToThrow()
         {
+            if (m_throwTimeTaken < throwDelay)
+            {
+                m_throwTimeTaken += Time.deltaTime;
+
+                isReadyToThrow = false;
+                projection.lineRenderer.enabled = false;
+
+                m_playerSM.ChangeState(EPlayerState.Idle);
+                return;
+            }
+
             if (!m_input.ReadyToThrowInput) return;
 
             if (isReadyToThrow)
@@ -344,6 +351,7 @@ namespace Player
             _spawned.Init(m_projectileDir, false);
 
             m_playerSM.ChangeState(EPlayerState.Idle);
+            m_throwTimeTaken = 0f;
         }
         
         public void BlockInputToggle()
@@ -397,13 +405,14 @@ namespace Player
             if (m_curHp == 0)
             {
                 isDead = true;
+                m_playerAnim.SetBool(OnDead, true);
                 Die();
             }
         }
 
         public void Die()
         {
-            m_playerAnim.SetBool(OnDead, true);
+            m_playerSM.ChangeState(EPlayerState.Die);
             // 현재 OnDead 애니메이션이 종료되었다면
             if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
             {

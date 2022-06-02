@@ -81,7 +81,7 @@ MonoBehaviour:
   m_groundCheckTransform: {fileID: 5468780449192090612}
   isDead: 0
   m_attackPos: {fileID: 4279139996462352282}
-  m_attackFx: {fileID: 0}
+  m_attackFx: {fileID: 1565131197722278, guid: 9e08e7eea9b67324f9c545b241004b0b, type: 3}
 --- !u!114 &5468780448435672275
 MonoBehaviour:
   m_ObjectHideFlags: 0

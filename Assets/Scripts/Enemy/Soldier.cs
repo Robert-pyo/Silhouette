@@ -53,6 +53,7 @@ public class Soldier : Enemy
 
     private void Update()
     {
+        if (isDead) return;
         UpdateAnimation();
         m_enemyAnim.SetFloat(Velocity, Agent.velocity.sqrMagnitude);
     }

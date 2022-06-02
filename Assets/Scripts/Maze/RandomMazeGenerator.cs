@@ -22,7 +22,7 @@ public class RandomMazeGenerator : MonoBehaviour
     private Node m_currentNode;
 
     private GameObject m_parentObject;
-    private SaveData m_saveData = new SaveData();
+    //private SaveData m_saveData = new SaveData();
     private string m_filePath;
 
     private void Awake()
@@ -65,53 +65,53 @@ public class RandomMazeGenerator : MonoBehaviour
     //     SaveMaze();
     // }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            SaveMaze();
-        }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.T))
+    //    {
+    //        SaveMaze();
+    //    }
 
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            LoadMaze();
-        }
-    }
+    //    if (Input.GetKeyDown(KeyCode.Y))
+    //    {
+    //        LoadMaze();
+    //    }
+    //}
 
-    public void SaveMaze()
-    {
-        m_saveData.objs.Add(gameObject);
-        // foreach (Transform _child in transform.GetComponentsInChildren<Transform>())
-        // {
-        //     m_saveData.objs.Add(_child.gameObject);
-        // }
+    //public void SaveMaze()
+    //{
+    //    m_saveData.objs.Add(gameObject);
+    //    // foreach (Transform _child in transform.GetComponentsInChildren<Transform>())
+    //    // {
+    //    //     m_saveData.objs.Add(_child.gameObject);
+    //    // }
 
-        string _saveData = JsonUtility.ToJson(m_saveData, true);
+    //    string _saveData = JsonUtility.ToJson(m_saveData, true);
 
-        int _count = 0;
-        string _fileName = Path.Combine(m_filePath, $"MazeData_{_count}.json");
-        while (File.Exists(_fileName))
-        {
-            _count++;
-            _fileName = Path.Combine(m_filePath, $"MazeData_{_count}.json");
-        }
+    //    int _count = 0;
+    //    string _fileName = Path.Combine(m_filePath, $"MazeData_{_count}.json");
+    //    while (File.Exists(_fileName))
+    //    {
+    //        _count++;
+    //        _fileName = Path.Combine(m_filePath, $"MazeData_{_count}.json");
+    //    }
 
-        File.WriteAllText(_fileName, _saveData);
-    }
+    //    File.WriteAllText(_fileName, _saveData);
+    //}
 
-    public void LoadMaze()
-    {
-        string _fileName = Path.Combine(m_filePath, $"MazeData_0.json");
-        string _jsonData = File.ReadAllText(_fileName);
-        SaveData _data = JsonUtility.FromJson<SaveData>(_jsonData);
+    //public void LoadMaze()
+    //{
+    //    string _fileName = Path.Combine(m_filePath, $"MazeData_0.json");
+    //    string _jsonData = File.ReadAllText(_fileName);
+    //    SaveData _data = JsonUtility.FromJson<SaveData>(_jsonData);
         
-        Instantiate(_data.objs[0], Vector3.zero, Quaternion.identity);
+    //    Instantiate(_data.objs[0], Vector3.zero, Quaternion.identity);
 
-        foreach (GameObject _obj in _data.objs)
-        {
-            Instantiate(_obj, Vector3.zero, Quaternion.identity);
-        }
-    }
+    //    foreach (GameObject _obj in _data.objs)
+    //    {
+    //        Instantiate(_obj, Vector3.zero, Quaternion.identity);
+    //    }
+    //}
 
     private void InsertRandomNodeToList()
     {

@@ -15,13 +15,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LevelData m_levelData;
     private int currentLevel;
     [SerializeField] private int activatedVisionCount;
-    public List<VibrationGenerator> activatedVisionList;
 
     public UnityAction onItemUsed;
 
     public UnityAction onWireCreate;
     public UnityAction onVisionWardActivated;
     public UnityAction onVisionWardDeactivated;
+
+    public UnityAction<bool> conditionCompleteEvent;
 
     private void Awake()
     {
@@ -50,12 +51,22 @@ public class GameManager : MonoBehaviour
         onVisionWardActivated?.Invoke();
         activatedVisionCount++;
         onWireCreate?.Invoke();
+
+        if (activatedVisionCount == m_levelData.shouldActivateVisionWardCount)
+        {
+            conditionCompleteEvent?.Invoke(true);
+        }
     }
 
     public void OnWardDisabled()
     {
         onVisionWardDeactivated?.Invoke();
         activatedVisionCount--;
+
+        if (activatedVisionCount != m_levelData.shouldActivateVisionWardCount)
+        {
+            conditionCompleteEvent?.Invoke(false);
+        }
     }
 
     private void SyncCurrentLevel()
