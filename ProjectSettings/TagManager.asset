@@ -12,7 +12,7 @@ TagManager:
   - EnemySound
   - PlayerSound
   - VisionSound
-  - VCAM
+  - VCam
   layers:
   - Default
   - TransparentFX
@@ -27,6 +27,7 @@ TagManager:
   - Player
   - SoundVisualizer
   - Wire
+  - ChapterInfo
   - 
   - 
   - 

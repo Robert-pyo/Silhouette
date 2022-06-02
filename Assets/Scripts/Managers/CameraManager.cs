@@ -1,5 +1,7 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,11 +10,11 @@ public class CameraManager : MonoBehaviour
     private static CameraManager s_instance;
     public static CameraManager Instance => s_instance;
 
-    public Cinemachine.CinemachineVirtualCamera[] vCamArray;
+    public CinemachineVirtualCamera[] vCamArray;
 
     // AreaID, VCAM
-    private readonly Dictionary<int, Cinemachine.CinemachineVirtualCamera> m_dicViewArea = new Dictionary<int, Cinemachine.CinemachineVirtualCamera>();
-    [SerializeField] private Cinemachine.CinemachineVirtualCamera m_currentView;
+    private readonly Dictionary<int, CinemachineVirtualCamera> m_dicViewArea = new Dictionary<int, CinemachineVirtualCamera>();
+    [SerializeField] private CinemachineVirtualCamera m_currentView;
 
     [HideInInspector] public UnityEvent<int> onCameraChangeEvent;
     //[HideInInspector] public UnityEvent onCameraDirectionReset;
@@ -28,6 +30,8 @@ public class CameraManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        OnSceneChanged();
+
         // dictionary에 Virtual Camera 추가
         for (int i = 0; i < vCamArray.Length; ++i)
         {
@@ -35,11 +39,12 @@ public class CameraManager : MonoBehaviour
         }
 
         onCameraChangeEvent.AddListener(ChangeView);
+        SceneController.Instance.onSceneChangeEvent += OnSceneChanged;
 
         m_dicViewArea.TryGetValue(0, out m_currentView);
     }
 
-    private void ChangeView(int areaID)
+    public void ChangeView(int areaID)
     {
         StartCoroutine(ChangeDirection(areaID));
     }
@@ -58,5 +63,18 @@ public class CameraManager : MonoBehaviour
         {
             m_currentView.gameObject.SetActive(true);
         }
+    }
+
+    private void OnSceneChanged()
+    {
+        GameObject[] _vCamObjs = GameObject.FindGameObjectsWithTag("VCam");
+        List<CinemachineVirtualCamera> _vCams = new List<CinemachineVirtualCamera>();
+        
+        foreach (GameObject _obj in _vCamObjs)
+        {
+            _vCams.Add(_obj.GetComponent<CinemachineVirtualCamera>());
+        }
+
+        vCamArray = _vCams.ToArray();
     }
 }
