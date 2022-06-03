@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     private static GameManager m_instance;
     public static GameManager Instance => m_instance;
     
-    [HideInInspector]
-    public PlayerController player;
+    private PlayerController player;
+    public PlayerController Player => player;
 
     [Header("Level Conditions")]
     [SerializeField] private LevelData m_levelData;
@@ -73,6 +73,12 @@ public class GameManager : MonoBehaviour
     {
         print("SyncCurrentLevel Called!");
         m_levelData = LevelManager.Instance.currentLevel.data;
+
+        if (GameObject.FindGameObjectWithTag("Player"))
+        {
+            print("Player Found");
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
     }
 
     public void ExitGame()

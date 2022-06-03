@@ -230,8 +230,8 @@ namespace Player
         {
             //Agent.speed = moveSpeed;
             m_playerAnim.SetBool(IsCrouching, false);
-            m_collider.center = Vector3.up;
-            m_collider.height = 2f;
+            m_collider.center = new Vector3(0f, 0.95f, 0f);
+            m_collider.height = 1.85f;
         }
 
         private void PushAndPull_Enter()

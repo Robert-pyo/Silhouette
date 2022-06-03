@@ -11,9 +11,10 @@ public class SceneController : MonoBehaviour
     
     [HideInInspector] public Scene currentScene;
     [HideInInspector] public Scene prevScene;
-    [HideInInspector] public Scene nextScene;
 
     public UnityAction onSceneChangeEvent;
+    public UnityAction onSceneInEvent;
+    public UnityAction onSceneOutEvent;
 
     private void Awake()
     {
@@ -31,10 +32,34 @@ public class SceneController : MonoBehaviour
 
     public void ChangeToNextScene(string nextSceneName)
     {
+        StartCoroutine(ChangeScene(nextSceneName));
+    }
+
+    private IEnumerator ChangeScene(string nextSceneName)
+    {
+        onSceneOutEvent?.Invoke();
+
+        yield return new WaitForSeconds(2f);
+
         prevScene = currentScene;
         SceneManager.LoadSceneAsync(nextSceneName);
         currentScene = SceneManager.GetSceneByName(nextSceneName);
-        
+
+        yield return new WaitUntil(() => currentScene.isLoaded);
+
         onSceneChangeEvent?.Invoke();
+        onSceneInEvent?.Invoke();
+    }
+
+    public void ChangeSceneAdditively(string targetSceneName)
+    {
+        onSceneOutEvent?.Invoke();
+
+        prevScene = currentScene;
+        SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
+        currentScene = SceneManager.GetSceneByName(targetSceneName);
+
+        onSceneChangeEvent?.Invoke();
+        onSceneInEvent?.Invoke();
     }
 }

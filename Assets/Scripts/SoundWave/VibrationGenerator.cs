@@ -26,7 +26,12 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
         m_isActivated = false;
 
         GameManager.Instance.onVisionWardActivated += ActivateVisionWard;
-        GameManager.Instance.player.addWireToWardEvent += AddWireToWard;
+        SceneController.Instance.onSceneChangeEvent += Init;
+    }
+
+    private void Init()
+    {
+        GameManager.Instance.Player.addWireToWardEvent += AddWireToWard;
     }
 
     private void ActivateVisionWard()

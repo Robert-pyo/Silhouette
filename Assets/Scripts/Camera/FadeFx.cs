@@ -13,6 +13,9 @@ public class FadeFx : MonoBehaviour
     private void Awake()
     {
         m_waitSeconds = new WaitForSeconds(0.01f);
+
+        SceneController.Instance.onSceneInEvent += StartFadeIn;
+        SceneController.Instance.onSceneOutEvent += StartFadeOut;
     }
 
     private void StartFadeIn()

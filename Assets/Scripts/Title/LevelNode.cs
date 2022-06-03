@@ -12,7 +12,7 @@ public class LevelNode : MonoBehaviour
     [SerializeField] private bool m_isPrevLevelCleared;
     private bool m_isStartingLevel;
 
-    public UnityAction onLevelClickedEvent;
+    public UnityEvent onLevelClickedEvent;
 
     private void OnEnable()
     {

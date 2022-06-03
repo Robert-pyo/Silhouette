@@ -27,14 +27,41 @@ public class SoundWaveManager : MonoBehaviour
             createFunc: () => Instantiate(soundWavePrefab, new Vector3(1000f, 1000f, 1000f), Quaternion.identity),
             actionOnGet: (soundFx) =>
             {
+                if (!soundFx) return;
                 soundFx.gameObject.SetActive(true);
             },
             actionOnRelease: (soundFx) =>
             {
+                if (!soundFx) return;
                 soundFx.gameObject.SetActive(false);
             },
             actionOnDestroy: (soundFx) =>
             {
+                if (!soundFx) return;
+                Destroy(soundFx.gameObject);
+            }, maxSize: 50);
+
+        SceneController.Instance.onSceneChangeEvent += Reset;
+    }
+
+    private void Reset()
+    {
+        m_soundWavePool.Clear();
+        m_soundWavePool = new ObjectPool<SoundWaveFx>(
+            createFunc: () => Instantiate(soundWavePrefab, new Vector3(1000f, 1000f, 1000f), Quaternion.identity),
+            actionOnGet: (soundFx) =>
+            {
+                if (!soundFx) return;
+                soundFx.gameObject.SetActive(true);
+            },
+            actionOnRelease: (soundFx) =>
+            {
+                if (!soundFx) return;
+                soundFx.gameObject.SetActive(false);
+            },
+            actionOnDestroy: (soundFx) =>
+            {
+                if (!soundFx) return;
                 Destroy(soundFx.gameObject);
             }, maxSize: 50);
     }
@@ -70,7 +97,11 @@ public class SoundWaveManager : MonoBehaviour
         if (!visualizer) yield break;
         yield return StartCoroutine(ReleaseVisible(visualizer));
         
-        visualizer.tag = "Untagged";
+        if (visualizer)
+        {
+            visualizer.tag = "Untagged";
+        }
+
         m_soundWavePool.Release(soundFx);
     }
 

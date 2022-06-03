@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 5468780448435672302, guid: 3d03c9af4a7520349a09ad29d4fce889, type: 3}
   maxHp: 2
-  recognizeRange: 10
-  attackRange: 5
+  recognizeRange: 6
+  attackRange: 4
   attackDamage: 1

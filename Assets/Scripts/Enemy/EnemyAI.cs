@@ -73,6 +73,7 @@ public class EnemyAI : MonoBehaviour
     private void Patrol_Enter()
     {
         currentState = m_enemyState.State;
+        m_owner.Agent.ResetPath();
     }
     private void Patrol_Update()
     {

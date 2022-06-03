@@ -78,7 +78,6 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             {
                 _target = _results[0].transform;
                 m_lastDetectedTarget = _target;
-                return _target;
             }
         }
 

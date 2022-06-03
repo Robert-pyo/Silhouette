@@ -32,16 +32,8 @@ public class CameraManager : MonoBehaviour
 
         OnSceneChanged();
 
-        // dictionary에 Virtual Camera 추가
-        for (int i = 0; i < vCamArray.Length; ++i)
-        {
-            m_dicViewArea.Add(i, vCamArray[i]);
-        }
-
         onCameraChangeEvent.AddListener(ChangeView);
         SceneController.Instance.onSceneChangeEvent += OnSceneChanged;
-
-        m_dicViewArea.TryGetValue(0, out m_currentView);
     }
 
     public void ChangeView(int areaID)
@@ -55,6 +47,7 @@ public class CameraManager : MonoBehaviour
     {
         yield return new WaitUntil(() => PlayerInput.Instance.VInput < 0.1f && PlayerInput.Instance.HInput < 0.1f);
 
+        if (!m_currentView) yield break;
         m_currentView.gameObject.SetActive(false);
 
         m_dicViewArea.TryGetValue(areaID, out m_currentView);
@@ -63,18 +56,38 @@ public class CameraManager : MonoBehaviour
         {
             m_currentView.gameObject.SetActive(true);
         }
+
+        yield return null;
     }
 
     private void OnSceneChanged()
     {
         GameObject[] _vCamObjs = GameObject.FindGameObjectsWithTag("VCam");
+        //Debug.Log(_vCamObjs.Length);
         List<CinemachineVirtualCamera> _vCams = new List<CinemachineVirtualCamera>();
         
         foreach (GameObject _obj in _vCamObjs)
         {
             _vCams.Add(_obj.GetComponent<CinemachineVirtualCamera>());
+
+            if (_obj == m_currentView) continue;
+
+            _obj.gameObject.SetActive(false);
         }
 
         vCamArray = _vCams.ToArray();
+
+        m_dicViewArea.Clear();
+        for (int i = 0; i < vCamArray.Length; ++i)
+        {
+            m_dicViewArea.Add(i, vCamArray[i]);
+        }
+
+        m_dicViewArea.TryGetValue(0, out m_currentView);
+
+        if (m_currentView)
+        {
+            m_currentView.gameObject.SetActive(true);
+        }
     }
 }

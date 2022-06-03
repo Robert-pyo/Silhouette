@@ -10,7 +10,12 @@ public class InteractionPopUp : MonoBehaviour
 
     private void Awake()
     {
-        m_player = GameManager.Instance.player;
+        SceneController.Instance.onSceneChangeEvent += Init;
+    }
+
+    private void Init()
+    {
+        m_player = GameManager.Instance.Player;
 
         m_player.interactionPopUpEvent += PopUpUI;
         m_player.popUpReleaseEvent += ReleasePopUp;

@@ -25,7 +25,7 @@ public class NodeLinker : MonoBehaviour
             float _dist = _dir.magnitude;
             int _count = (int)(_dist / m_waypointGap);
             
-            print(_count);
+            //print(_count);
             
             GameObject _waypointObj = Instantiate(waypointPrefab, nodeList[i].startPos.position + _dir.normalized * m_waypointGap,
                 Quaternion.LookRotation(new Vector3(_dir.x, 0f, _dir.z)));
