@@ -25,7 +25,8 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             m_colliders, LayerMask.GetMask("SoundVisualizer"));
 
         Transform _target = null;
-
+        
+        //Debug.Log(m_collideCount);
         for (int i = 0; i < m_collideCount; ++i)
         {
             // OverlapSphere에 걸린 Collider 중에 다른 Enemy가 발생시킨 sound가 있다면 제외
@@ -77,6 +78,7 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             {
                 _target = _results[0].transform;
                 m_lastDetectedTarget = _target;
+                return _target;
             }
         }
 

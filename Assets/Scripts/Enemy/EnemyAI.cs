@@ -44,6 +44,11 @@ public class EnemyAI : MonoBehaviour
         m_enemyState.ChangeState(EEnemyState.Idle);
     }
 
+    private void Start()
+    {
+        StartCoroutine(m_owner.FindTarget());
+    }
+
     private void Idle_Enter()
     {
         currentState = m_enemyState.State;
@@ -51,20 +56,17 @@ public class EnemyAI : MonoBehaviour
     }
     private void Idle_Update()
     {
+        if (m_owner.target)
+        {
+            m_enemyState.ChangeState(EEnemyState.Trace);
+        }
+        
         m_idleTimeTaken += Time.deltaTime;
 
         if (m_delayTimeIdleToPatrol <= m_idleTimeTaken && m_owner.waypointSelector)
         {
             m_enemyState.ChangeState(EEnemyState.Patrol);
             return;
-        }
-        
-        m_owner.FindTarget();
-
-        // TODO : 소리가 감지되었다면 진원지로 Trace
-        if (m_owner.target)
-        {
-            m_enemyState.ChangeState(EEnemyState.Trace);
         }
     }
 
@@ -74,8 +76,6 @@ public class EnemyAI : MonoBehaviour
     }
     private void Patrol_Update()
     {
-        // TODO : 소리가 감지되었다면 진원지로 Trace
-        m_owner.FindTarget();
         if (m_owner.target)
         {
             m_enemyState.ChangeState(EEnemyState.Trace);
@@ -103,9 +103,9 @@ public class EnemyAI : MonoBehaviour
     }
     private void Trace_Update()
     {
-        m_owner.FindTarget();
         if (!m_owner.target)
         {
+            m_owner.Agent.ResetPath();
             m_enemyState.ChangeState(EEnemyState.Idle);
             return;
         }

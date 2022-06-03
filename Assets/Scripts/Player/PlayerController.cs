@@ -315,8 +315,6 @@ namespace Player
 
                 isReadyToThrow = false;
                 projection.lineRenderer.enabled = false;
-
-                m_playerSM.ChangeState(EPlayerState.Idle);
                 return;
             }
 

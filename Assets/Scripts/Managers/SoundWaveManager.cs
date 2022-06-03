@@ -57,7 +57,6 @@ public class SoundWaveManager : MonoBehaviour
         _soundFx.transform.parent = generator;
         
         GameObject _visualizer = _soundFx.transform.GetChild(0).gameObject;
-        _visualizer.tag = "Untagged";
 
         StartCoroutine(GenerateVisualizer(_soundFx, _visualizer, powerSize));
 
@@ -71,6 +70,7 @@ public class SoundWaveManager : MonoBehaviour
         if (!visualizer) yield break;
         yield return StartCoroutine(ReleaseVisible(visualizer));
         
+        visualizer.tag = "Untagged";
         m_soundWavePool.Release(soundFx);
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,9 +54,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     public abstract void UpdateAnimation();
 
-    public virtual void FindTarget()
+    public IEnumerator FindTarget()
     {
-        target = m_targetFinder.FindTarget();
+        while (true)
+        {
+            target = m_targetFinder.FindTarget();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     public void Hit(ushort damage)
@@ -97,5 +102,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
             transform, genTransform.position, Vector3.zero, power);
 
         _obj.transform.GetChild(0).tag = "EnemySound";
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position, Data.recognizeRange);
     }
 }
