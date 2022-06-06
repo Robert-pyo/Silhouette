@@ -86,8 +86,13 @@ namespace Player
         private float m_throwTimeTaken;
         private Vector3 m_projectileDir;
 
+        [Space(10f)]
+        public List<SoundGroup> soundGroupList;
+        public SoundDistributor soundDistributor;
+
         public UnityAction interactionPopUpEvent;
         public UnityAction popUpReleaseEvent;
+        public UnityAction onDeadEvent;
         
         public UnityAction<Wire> addWireToWardEvent;
 
@@ -97,6 +102,7 @@ namespace Player
         private static readonly int OnPush = Animator.StringToHash("OnPush");
         private static readonly int OnJump = Animator.StringToHash("OnJump");
         private static readonly int OnDead = Animator.StringToHash("OnDead");
+        private static readonly int OnActivateWard = Animator.StringToHash("OnActivateWard");
 
         private void Awake()
         {
@@ -117,6 +123,13 @@ namespace Player
 
             // Command
             m_activateVisionWard = new VisionWardInteraction(this);
+            
+            // Sounds
+            soundDistributor.soundGroupNames = new string[soundGroupList.Count];
+            for (int i = 0; i < soundGroupList.Count; ++i)
+            {
+                soundDistributor.soundGroupNames[i] = soundGroupList[i].groupName;
+            }
             
             m_playerSM.ChangeState(EPlayerState.Idle);
         }
@@ -221,6 +234,12 @@ namespace Player
         {
             m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
 
+            if (Physics.Raycast(transform.position, Vector3.up, 2f, 1 << LayerMask.NameToLayer("Wall")))
+            {
+                return;
+            }
+            
+            // 숙이기 입력이 아직 true라면 계속 상태 유지
             if (m_input.CrouchInput) return;
 
             m_playerSM.ChangeState(m_rigidbody.velocity.sqrMagnitude > 0.01f ? EPlayerState.Run : EPlayerState.Idle);
@@ -259,6 +278,7 @@ namespace Player
         private void PushAndPull_Exit()
         {
             isActing = false;
+            targetObj.transform.parent = null;
         }
 
         private void ThrowSomething_Update()
@@ -276,10 +296,12 @@ namespace Player
             }
 
             isActing = true;
+            
+            m_playerAnim.SetTrigger(OnActivateWard);
 
+            targetObj.GetComponent<VibrationGenerator>().StateToggle();
             m_activateVisionWard.Execute();
         }
-
         private void OnActivateWard_Update()
         {
             if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
@@ -287,7 +309,6 @@ namespace Player
                 m_playerSM.ChangeState(EPlayerState.Idle);
             }
         }
-
         private void OnActivateWard_Exit()
         {
             isActing = false;
@@ -297,6 +318,7 @@ namespace Player
         {
             // 죽을 때 처리
             m_input.playerControllerInputBlocked = true;
+            soundDistributor.SoundPlayer(soundGroupList,"Dying", 0);
         }
 
         #endregion
@@ -341,6 +363,8 @@ namespace Player
             m_projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * throwForce + transform.up * throwForce;
             projection.SimulateTrajectory(rockPrefab, startThrowPos.position, m_projectileDir);
             
+            m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
+            
             if (!m_input.ThrowInput) return;
             isReadyToThrow = false;
             projection.lineRenderer.enabled = false;
@@ -358,34 +382,35 @@ namespace Player
             //Agent.isStopped = !Agent.isStopped;
         }
 
+        private int m_stepCount = 0;
         public void GenerateWalkSoundWave()
         {
             // 걸을 때 음파 생성
-            if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, float.MaxValue, LayerMask.GetMask("Ground")))
+            if (Physics.Raycast(groundChecker.position, Vector3.down, out var _hit, 2f, LayerMask.GetMask("Ground")))
             {
                 GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
                     _hit.transform, _hit.point, Vector3.zero, moveSpeed);
 
+                if (!_obj) return;
                 _obj.transform.GetChild(0).tag = "PlayerSound";
+                
+                float _volume = moveSpeed / SoundWaveManager.Instance.maxPower;
+
+                SoundGroup _group = soundGroupList.Find(group => group.groupName == "Footstep");
+                soundDistributor.SoundPlayer(soundGroupList, "Footstep", m_stepCount, _volume);
+                m_stepCount = (m_stepCount + 1) % _group.audioClipList.Count;
             }
         }
 
         private void PushAndPull()
         {
-            var _moveDir = transform.forward * m_input.VInput;
+            var _moveDir = Vector3.forward * m_input.VInput;
 
-            targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+            //targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             //Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            m_playerAnim.SetFloat(Velocity, m_input.VInput * moveSpeed);
-        }
-
-        private void ResetInteractionStatus()
-        {
-            if (!targetObj && !m_interactionObstacle) return;
-            
-            targetObj = null;
-            m_interactionObstacle = null;
+            targetObj.transform.parent = transform;
+            m_playerAnim.SetFloat(Velocity, moveSpeed * m_input.VInput);
         }
 
         public Wire EnableWire()
@@ -400,7 +425,7 @@ namespace Player
         {
             m_curHp -= (short)damage;
 
-            if (m_curHp == 0)
+            if (m_curHp <= 0)
             {
                 isDead = true;
                 m_playerAnim.SetBool(OnDead, true);
@@ -411,12 +436,10 @@ namespace Player
         public void Die()
         {
             m_playerSM.ChangeState(EPlayerState.Die);
-            // 현재 OnDead 애니메이션이 종료되었다면
-            if (m_playerAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-            {
-                // TODO : 게임 오버 처리
-                print("게임 오버");
-            }
+            m_collider.isTrigger = true;
+            m_rigidbody.isKinematic = true;
+            enabled = false;
+            onDeadEvent?.Invoke();
         }
     }
 }

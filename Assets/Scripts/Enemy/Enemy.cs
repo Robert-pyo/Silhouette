@@ -43,6 +43,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     [Header("Enemy State")]
     public bool isDead;
+    
+    [Header("Sounds")]
+    public List<SoundGroup> soundGroups;
+    public SoundDistributor soundDistributor;
 
     protected Outline m_outline;
 
@@ -84,6 +88,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
         }
     }
 
+    private int m_stepCount = 0;
     public void GenerateWalkSoundWave()
     {
         // 걸을 때 음파 생성
@@ -92,7 +97,14 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
             GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
                 _hit.transform, _hit.point, Vector3.zero, m_moveSpeed);
 
+            if (!_obj) return;
             _obj.transform.GetChild(0).tag = "EnemySound";
+
+            float _volume = m_moveSpeed / SoundWaveManager.Instance.maxPower;
+            
+            soundDistributor.SoundPlayer(soundGroups, "Footstep", m_stepCount, _volume);
+            SoundGroup _group = soundGroups.Find(group => group.groupName == "Footstep");
+            m_stepCount = (m_stepCount + 1) % _group.audioClipList.Count;
         }
     }
 

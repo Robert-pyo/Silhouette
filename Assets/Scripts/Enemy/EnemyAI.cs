@@ -115,8 +115,15 @@ public class EnemyAI : MonoBehaviour
         m_owner.Move(_targetPosition);
 
         if (!m_owner.target.CompareTag("Player") && !m_owner.target.CompareTag("VisionWard")) return;
+
+        Vector3 _targetDir = _targetPosition - m_owner.transform.position;
+        m_owner.targetDistance = _targetDir.sqrMagnitude;
+
+        if (Physics.Raycast(transform.position, _targetDir, float.MaxValue, 1 << LayerMask.NameToLayer("Wall")))
+        {
+            return;
+        }
         
-        m_owner.targetDistance = (_targetPosition - m_owner.transform.position).sqrMagnitude;
         float _attackRange = m_owner.Data.attackRange * m_owner.Data.attackRange;
         if (_attackRange > m_owner.targetDistance)
         {

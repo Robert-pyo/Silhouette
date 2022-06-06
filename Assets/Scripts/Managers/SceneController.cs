@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,13 +23,18 @@ public class SceneController : MonoBehaviour
         {
             s_instance = this;
         }
-        else if (s_instance != this)
+        else
         {
-            Destroy(gameObject);
+            return;
         }
-        
+
         currentScene = SceneManager.GetActiveScene();
     }
+
+    // private void FixedUpdate()
+    // {
+    //     print(currentScene.name);
+    // }
 
     public void ChangeToNextScene(string nextSceneName)
     {
@@ -42,24 +48,25 @@ public class SceneController : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         prevScene = currentScene;
-        SceneManager.LoadSceneAsync(nextSceneName);
+        SceneManager.LoadScene(nextSceneName);
         currentScene = SceneManager.GetSceneByName(nextSceneName);
 
         yield return new WaitUntil(() => currentScene.isLoaded);
 
         onSceneChangeEvent?.Invoke();
         onSceneInEvent?.Invoke();
+        currentScene = SceneManager.GetActiveScene();
     }
 
-    public void ChangeSceneAdditively(string targetSceneName)
-    {
-        onSceneOutEvent?.Invoke();
-
-        prevScene = currentScene;
-        SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
-        currentScene = SceneManager.GetSceneByName(targetSceneName);
-
-        onSceneChangeEvent?.Invoke();
-        onSceneInEvent?.Invoke();
-    }
+    // public void ChangeSceneAdditively(string targetSceneName)
+    // {
+    //     onSceneOutEvent?.Invoke();
+    //
+    //     prevScene = currentScene;
+    //     SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
+    //     currentScene = SceneManager.GetSceneByName(targetSceneName);
+    //
+    //     onSceneChangeEvent?.Invoke();
+    //     onSceneInEvent?.Invoke();
+    // }
 }

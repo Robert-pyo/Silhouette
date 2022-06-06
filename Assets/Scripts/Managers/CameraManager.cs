@@ -27,7 +27,7 @@ public class CameraManager : MonoBehaviour
         }
         else if (s_instance != this)
         {
-            Destroy(gameObject);
+            return;
         }
 
         OnSceneChanged();

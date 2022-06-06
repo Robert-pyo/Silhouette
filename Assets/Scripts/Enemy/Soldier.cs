@@ -48,7 +48,7 @@ public class Soldier : Enemy
         m_outline.OutlineMode = Outline.Mode.SilhouetteOnly;
         
         // 공격
-        m_attackWaitTime = new WaitForSeconds(0.5f);
+        m_attackWaitTime = new WaitForSeconds(0.2f);
     }
 
     private void Update()
@@ -65,6 +65,11 @@ public class Soldier : Enemy
     
     public override IEnumerator Attack()
     {
+        if (Physics.Raycast(transform.position, transform.forward, float.MaxValue, 1 << LayerMask.NameToLayer("Wall")))
+        {
+            yield break;
+        }
+        
         while (true)
         {
             GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
@@ -74,13 +79,18 @@ public class Soldier : Enemy
             GameObject _muzzleFx = Instantiate(m_attackFx, m_attackPos.position, Quaternion.Euler(m_attackPos.eulerAngles));
             Destroy(_muzzleFx, 1f);
             
-            if (Physics.Raycast(transform.position, transform.forward, out var _hit, Data.attackRange, LayerMask.GetMask("Player", "Interactable", "Wall")))
+            soundDistributor.SoundPlayer(soundGroups, "RiffleShot", 0);
+            
+            if (Physics.Raycast(transform.position, transform.forward, out var _hit, float.MaxValue, LayerMask.GetMask("Player", "Interactable", "Wall")))
             {
                 if (_hit.transform.gameObject.layer == LayerMask.NameToLayer("Wall")) break;
 
                 IDamageable _damageable = _hit.transform.GetComponent<IDamageable>();
-                if (_damageable.IsDead) break;
-                _damageable.Hit(Data.attackDamage);
+                
+                if (_damageable is {IsDead: false})
+                {
+                    _damageable.Hit(Data.attackDamage);
+                }
             }
 
             yield return m_attackWaitTime;

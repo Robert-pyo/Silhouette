@@ -13,6 +13,7 @@ TagManager:
   - PlayerSound
   - VisionSound
   - VCam
+  - AudioRoot
   layers:
   - Default
   - TransparentFX

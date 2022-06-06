@@ -5,15 +5,15 @@ using Player;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager m_instance;
-    public static GameManager Instance => m_instance;
+    private static GameManager s_instance;
+    public static GameManager Instance => s_instance;
     
-    private PlayerController player;
-    public PlayerController Player => player;
+    private PlayerController m_player;
+    public PlayerController Player => m_player;
 
     [Header("Level Conditions")]
-    [SerializeField] private LevelData m_levelData;
-    private int currentLevel;
+    public LevelData levelData;
+    private int m_currentLevel;
     [SerializeField] private int activatedVisionCount;
 
     public UnityAction onItemUsed;
@@ -22,27 +22,31 @@ public class GameManager : MonoBehaviour
     public UnityAction onVisionWardActivated;
     public UnityAction onVisionWardDeactivated;
 
+    public UnityAction<int> onProgressUpdateEvent;
     public UnityAction<bool> conditionCompleteEvent;
 
     private void Awake()
     {
-        if (m_instance)
+        if (!s_instance)
+        {
+            s_instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
         {
             Destroy(gameObject);
             return;
         }
 
-        m_instance = this;
-
         if (GameObject.FindGameObjectWithTag("Player"))
         {
-            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+            m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         }
 
         SceneController.Instance.onSceneChangeEvent += SyncCurrentLevel;
 
-        if (!m_levelData) return;
-        currentLevel = m_levelData.level;
+        if (!levelData) return;
+        m_currentLevel = levelData.level;
         activatedVisionCount = 0;
     }
 
@@ -52,10 +56,12 @@ public class GameManager : MonoBehaviour
         activatedVisionCount++;
         onWireCreate?.Invoke();
 
-        if (activatedVisionCount == m_levelData.shouldActivateVisionWardCount)
+        if (activatedVisionCount == levelData.shouldActivateVisionWardCount)
         {
             conditionCompleteEvent?.Invoke(true);
         }
+
+        onProgressUpdateEvent?.Invoke(activatedVisionCount);
     }
 
     public void OnWardDisabled()
@@ -63,22 +69,27 @@ public class GameManager : MonoBehaviour
         onVisionWardDeactivated?.Invoke();
         activatedVisionCount--;
 
-        if (activatedVisionCount != m_levelData.shouldActivateVisionWardCount)
+        if (activatedVisionCount != levelData.shouldActivateVisionWardCount)
         {
             conditionCompleteEvent?.Invoke(false);
         }
+        
+        onProgressUpdateEvent?.Invoke(activatedVisionCount);
     }
 
     private void SyncCurrentLevel()
     {
         print("SyncCurrentLevel Called!");
-        m_levelData = LevelManager.Instance.currentLevel.data;
+        levelData = LevelManager.Instance.currentLevel.data;
+        activatedVisionCount = 0;
 
-        if (GameObject.FindGameObjectWithTag("Player"))
+        if (!GameObject.FindGameObjectWithTag("Player"))
         {
-            print("Player Found");
-            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+            return;
         }
+
+        m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        print("Player Found");
     }
 
     public void ExitGame()

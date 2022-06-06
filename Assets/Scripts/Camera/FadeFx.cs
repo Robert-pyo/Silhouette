@@ -20,12 +20,14 @@ public class FadeFx : MonoBehaviour
 
     private void StartFadeIn()
     {
-        StartCoroutine(FadeIn());
+        if (!this) return;
+        StartCoroutine(nameof(FadeIn));
     }
 
     private void StartFadeOut()
     {
-        StartCoroutine(FadeOut());
+        if (!this) return;
+        StartCoroutine(nameof(FadeOut));
     }
 
     private IEnumerator FadeIn()

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Player;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public struct tPlayerCommand
@@ -11,6 +11,7 @@ public struct tPlayerCommand
     public KeyCode playerInteraction;
     public KeyCode playerThrowReady;
     public KeyCode playerThrowSomething;
+    public KeyCode pause;
 }
 
 public class PlayerInput : MonoBehaviour
@@ -39,9 +40,13 @@ public class PlayerInput : MonoBehaviour
     private bool m_throwSomething;
 
     // 상호작용 입력
-    private bool m_interaction;
+    private bool m_bInteraction;
     private float m_hInput;
     private float m_vInput;
+    
+    // 게임 멈추기
+    private bool m_bPauseToggle;
+    public UnityAction onPauseEvent;
 
     // getter / setter
     public Camera PlayerCamera => m_camera;
@@ -100,7 +105,7 @@ public class PlayerInput : MonoBehaviour
 
     public bool InteractionInput
     {
-        get { return m_interaction && !playerControllerInputBlocked; }
+        get { return m_bInteraction && !playerControllerInputBlocked; }
     }
 
     public float VInput
@@ -124,7 +129,9 @@ public class PlayerInput : MonoBehaviour
             return m_hInput;
         }
     }
-    
+
+    public bool IsPaused => m_bPauseToggle;
+
 
     private void Awake()
     {
@@ -168,10 +175,15 @@ public class PlayerInput : MonoBehaviour
         m_throwSomething = Input.GetKeyDown(m_command.playerThrowSomething);
         if (m_throwReady && m_throwSomething) m_throwReady = false;
         
-        m_interaction = Input.GetKeyDown(m_command.playerInteraction);
+        m_bInteraction = Input.GetKeyDown(m_command.playerInteraction);
 
         m_hInput = Input.GetAxis("Horizontal");
         m_vInput = Input.GetAxis("Vertical");
+
+        if (Input.GetKeyDown(m_command.pause))
+        {
+            PauseGame();
+        }
     }
 
     private void CalcMouseHit()
@@ -188,5 +200,13 @@ public class PlayerInput : MonoBehaviour
         }
 
         m_isMouseClickedGround = false;
+    }
+
+    public void PauseGame()
+    {
+        onPauseEvent?.Invoke();
+        m_bPauseToggle = !m_bPauseToggle;
+        playerControllerInputBlocked = !playerControllerInputBlocked;
+        Time.timeScale = Time.timeScale > 0 ? 0 : 1;
     }
 }

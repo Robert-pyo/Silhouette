@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 1627577804643909274}
   - component: {fileID: 1627577804643909277}
   - component: {fileID: 1627577804643909270}
+  - component: {fileID: 8623447348360208185}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -238,8 +239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19a4ec4940795a4491ea466eb91d2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  m_levelData: {fileID: 0}
+  m_levelData: {fileID: 11400000, guid: 7a78a2cf4e2a947418e789dce7eb7181, type: 2}
   activatedVisionCount: 0
 --- !u!114 &1627577804643909273
 MonoBehaviour:
@@ -254,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soundWavePrefab: {fileID: 6706784918625826246, guid: 02c1320adcd910e4e9a209875dd144e4, type: 3}
+  maxPower: 20
 --- !u!114 &1627577804643909274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel:
-    data: {fileID: 0}
+    data: {fileID: 11400000, guid: 7a78a2cf4e2a947418e789dce7eb7181, type: 2}
     level: 
     isCleared: 0
   chapterDataList:
@@ -322,3 +323,15 @@ MonoBehaviour:
       level: 1-5
       isCleared: 0
     isChapterCleared: 0
+--- !u!114 &8623447348360208185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627577804643909271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab17c4b5fcce2b647af13878a0d54c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

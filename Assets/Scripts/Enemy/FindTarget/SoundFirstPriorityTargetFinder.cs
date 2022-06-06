@@ -65,7 +65,7 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
                 m_lastDetectedTarget = _target;
             }
         }
-        
+
         if (!_target || _target.CompareTag("VisionWard") || _target.CompareTag("Player")) return _target;
         m_soundFx = _target.parent.GetComponent<SoundWaveFx>();
 

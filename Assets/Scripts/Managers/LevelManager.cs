@@ -37,6 +37,8 @@ public class LevelManager : MonoBehaviour
 
     // 전체 레벨 상황
     public List<ChapterInfo> chapterDataList;
+    
+    // 레벨별 Bgm
 
     private void Awake()
     {
@@ -46,11 +48,16 @@ public class LevelManager : MonoBehaviour
         }
         else if (s_instance != this)
         {
-            Destroy(gameObject);
+            return;
         }
         
         // 세이브 경로 지정
         m_savePath = Path.Combine(Application.dataPath, "LevelData/Level.json");
+
+        if (File.Exists(m_savePath))
+        {
+            LoadLevelData();
+        }
 
         // 씬 바뀔 때 레벨 저장해주기(임시)
         SceneController.Instance.onSceneChangeEvent += SaveLevelData;
@@ -74,6 +81,13 @@ public class LevelManager : MonoBehaviour
 
             if (_isLevelSelected) break;
         }
+        
+        //Debug.Log(currentLevel.level);
+    }
+
+    private void SyncLevelAudio()
+    {
+        
     }
 
     public void SaveLevelData()

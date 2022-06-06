@@ -10,20 +10,20 @@ public class InteractionPopUp : MonoBehaviour
 
     private void Awake()
     {
-        SceneController.Instance.onSceneChangeEvent += Init;
+        Invoke(nameof(Init), 1f);
     }
 
     private void Init()
     {
         m_player = GameManager.Instance.Player;
-
+        
         m_player.interactionPopUpEvent += PopUpUI;
         m_player.popUpReleaseEvent += ReleasePopUp;
     }
 
     public void PopUpUI()
     {
-        if (m_popUpTarget.activeSelf) return;
+        if (!m_popUpTarget || m_popUpTarget.activeSelf) return;
 
         transform.position = m_player.targetObj.transform.position + Vector3.up * 2f;
 
@@ -32,7 +32,7 @@ public class InteractionPopUp : MonoBehaviour
 
     public void ReleasePopUp()
     {
-        if (!m_popUpTarget.activeSelf) return;
+        if (!m_popUpTarget || !m_popUpTarget.activeSelf) return;
 
         m_popUpTarget.SetActive(false);
     }

@@ -34,6 +34,7 @@ Transform:
   - {fileID: 5468780447962531355}
   - {fileID: 5468780449192090612}
   - {fileID: 4279139996462352282}
+  - {fileID: 8049759340930891833}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,8 +81,25 @@ MonoBehaviour:
   targetDistance: 0
   m_groundCheckTransform: {fileID: 5468780449192090612}
   isDead: 0
+  soundGroups:
+  - groupName: RiffleShot
+    audioClipList:
+    - {fileID: 8300000, guid: 63bc66c5483fd344fb2dbe980bec53ba, type: 3}
+  - groupName: Footstep
+    audioClipList:
+    - {fileID: 8300000, guid: b6bf9816caadb4a4db31480ca7ae20cf, type: 3}
+    - {fileID: 8300000, guid: e94ffb6154ee23d439566aba49ea3b1b, type: 3}
+    - {fileID: 8300000, guid: f04dc5ea2f10d7548b69379b346a2789, type: 3}
+    - {fileID: 8300000, guid: ec0156da8e53f804dbb7175805fa3a64, type: 3}
+    - {fileID: 8300000, guid: 4618bf8faec41934fadfff5a2e2a0421, type: 3}
+    - {fileID: 8300000, guid: e86f116f2befcd14abd023effd4f7bdd, type: 3}
+    - {fileID: 8300000, guid: 963a34e032e7bb04e8c3a44eb3fd5ae1, type: 3}
+    - {fileID: 8300000, guid: a4c147a8011a0bb48947cab0ede2aff0, type: 3}
+    - {fileID: 8300000, guid: 18139d55c02fab7428f4caf1084dab7b, type: 3}
+    - {fileID: 8300000, guid: 3e84bf96a40ada143a3613dd1889d431, type: 3}
+  soundDistributor: {fileID: 3852322345894167592}
   m_attackPos: {fileID: 4279139996462352282}
-  m_attackFx: {fileID: 1565131197722278, guid: 9e08e7eea9b67324f9c545b241004b0b, type: 3}
+  m_attackFx: {fileID: 1198663731479534, guid: b46264f9e12caed4cb53e7c2ad64aa54, type: 3}
 --- !u!114 &5468780448435672275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,6 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentState: 0
   m_delayTimeIdleToPatrol: 2
+  m_waySelectNumber: 0
 --- !u!136 &5468780448435672277
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -170,6 +189,52 @@ Transform:
   m_Father: {fileID: 5468780448435672273}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7064141293681197246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8049759340930891833}
+  - component: {fileID: 3852322345894167592}
+  m_Layer: 0
+  m_Name: '@Sounds'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8049759340930891833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7064141293681197246}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5468780448435672273}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3852322345894167592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7064141293681197246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c47b92a2e0617643a93870df8a987e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundGroupNames:
+  - RiffleShot
+  - Footstep
 --- !u!1001 &6511178179158082483
 PrefabInstance:
   m_ObjectHideFlags: 0

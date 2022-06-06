@@ -4,49 +4,35 @@ using UnityEngine;
 
 public class SoundWaveManager : MonoBehaviour
 {
-    private static SoundWaveManager m_instance;
-    public static SoundWaveManager Instance => m_instance;
+    private static SoundWaveManager s_instance;
+    public static SoundWaveManager Instance => s_instance;
 
     public SoundWaveFx soundWavePrefab;
+    public int maxPower;
     private GameObject m_soundVisualizer;
 
     private ObjectPool<SoundWaveFx> m_soundWavePool;
 
     private void Awake()
     {
-        if (m_instance)
+        if (!s_instance)
         {
-            Destroy(gameObject);
+            s_instance = this;
+        }
+        else if (s_instance != this)
+        {
             return;
         }
 
-        m_instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        m_soundWavePool = new ObjectPool<SoundWaveFx>(
-            createFunc: () => Instantiate(soundWavePrefab, new Vector3(1000f, 1000f, 1000f), Quaternion.identity),
-            actionOnGet: (soundFx) =>
-            {
-                if (!soundFx) return;
-                soundFx.gameObject.SetActive(true);
-            },
-            actionOnRelease: (soundFx) =>
-            {
-                if (!soundFx) return;
-                soundFx.gameObject.SetActive(false);
-            },
-            actionOnDestroy: (soundFx) =>
-            {
-                if (!soundFx) return;
-                Destroy(soundFx.gameObject);
-            }, maxSize: 50);
+        Reset();
 
         SceneController.Instance.onSceneChangeEvent += Reset;
     }
 
     private void Reset()
     {
-        m_soundWavePool.Clear();
+        m_soundWavePool?.Clear();
+
         m_soundWavePool = new ObjectPool<SoundWaveFx>(
             createFunc: () => Instantiate(soundWavePrefab, new Vector3(1000f, 1000f, 1000f), Quaternion.identity),
             actionOnGet: (soundFx) =>
@@ -68,13 +54,14 @@ public class SoundWaveManager : MonoBehaviour
 
     public GameObject GenerateSoundWave(Transform generator, Vector3 hitPos, Vector3 hitDir, float powerSize)
     {
-        if (powerSize > 20)
+        if (powerSize > maxPower)
         {
-            powerSize = 20;
+            powerSize = maxPower;
         }
 
         var _soundFx = m_soundWavePool.Get();
-        
+
+        if (!_soundFx) return null;
         ParticleSystem.MainModule _particleMain = _soundFx.soundWaveFx.main;
         _particleMain.startSize = powerSize;
         

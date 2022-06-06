@@ -10,7 +10,7 @@ public class Door : MonoBehaviour, IEventReceiver
     {
         m_anim = GetComponent<Animator>();
 
-        GameManager.Instance.conditionCompleteEvent += ExecuteEvent;
+        GameManager.Instance.conditionCompleteEvent = ExecuteEvent;
     }
 
     public void ExecuteEvent(bool condition)
