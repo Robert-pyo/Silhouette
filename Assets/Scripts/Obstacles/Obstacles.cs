@@ -18,5 +18,5 @@ public abstract class Obstacles : MonoBehaviour
     [Header("Info")]
     public float mass;
 
-    protected Rigidbody obstacleRigidbody;
+    protected Rigidbody m_obstacleRigidbody;
 }

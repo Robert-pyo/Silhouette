@@ -404,12 +404,14 @@ namespace Player
 
         private void PushAndPull()
         {
-            var _moveDir = Vector3.forward * m_input.VInput;
+            var _moveDir = Vector3.forward * m_input.VInput * (moveSpeed * walkSpeedReduction);
 
             //targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             //Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+
+            transform.Translate(_moveDir * Time.deltaTime);
             targetObj.transform.parent = transform;
+
             m_playerAnim.SetFloat(Velocity, moveSpeed * m_input.VInput);
         }
 

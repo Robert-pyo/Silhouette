@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19a4ec4940795a4491ea466eb91d2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_levelData: {fileID: 11400000, guid: 7a78a2cf4e2a947418e789dce7eb7181, type: 2}
+  levelData: {fileID: 11400000, guid: 8deb3094eb90e1a4298c5319c6fa189e, type: 2}
   activatedVisionCount: 0
 --- !u!114 &1627577804643909273
 MonoBehaviour:
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel:
-    data: {fileID: 11400000, guid: 7a78a2cf4e2a947418e789dce7eb7181, type: 2}
+    data: {fileID: 0}
     level: 
     isCleared: 0
   chapterDataList:
@@ -310,7 +310,7 @@ MonoBehaviour:
     - data: {fileID: 11400000, guid: 7a78a2cf4e2a947418e789dce7eb7181, type: 2}
       level: 1-1
       isCleared: 0
-    - data: {fileID: 0}
+    - data: {fileID: 11400000, guid: 8deb3094eb90e1a4298c5319c6fa189e, type: 2}
       level: 1-2
       isCleared: 0
     - data: {fileID: 0}
@@ -335,3 +335,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab17c4b5fcce2b647af13878a0d54c47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundOption: {fileID: 11400000, guid: 762799840832e38449411197d860764b, type: 2}

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum SoundType
 {
@@ -21,9 +22,13 @@ public class SoundManager : MonoBehaviour
 {
     private static SoundManager s_instance;
     public static SoundManager Instance => s_instance;
+
+    public SoundOptionData soundOption;
     
     private AudioSource[] m_audioSources = new AudioSource[(int)SoundType.MaxCount];
     private Dictionary<string, AudioClip> m_audioClips = new Dictionary<string, AudioClip>();
+
+    public UnityAction onSoundValueChangeEvent;
 
     private void Awake()
     {
@@ -42,6 +47,9 @@ public class SoundManager : MonoBehaviour
     private void OnEnable()
     {
         SceneController.Instance.onSceneInEvent += Clear;
+
+        SceneController.Instance.onSceneOutEvent -= ClearRegisteredEvents;
+        SceneController.Instance.onSceneOutEvent += ClearRegisteredEvents;
     }
 
     public void Init()
@@ -60,6 +68,11 @@ public class SoundManager : MonoBehaviour
             GameObject _sounds = new GameObject { name = _soundNames[i] };
 
             m_audioSources[i] = _sounds.AddComponent<AudioSource>();
+            SoundSynchronizer _soundSync = _sounds.AddComponent<SoundSynchronizer>();
+
+            _soundSync.type = _soundNames[i] == "Bgm" ? SoundType.Bgm : SoundType.Effect;
+            _soundSync.source = m_audioSources[i];
+
             _sounds.transform.parent = _root.transform;
         }
 
@@ -92,7 +105,7 @@ public class SoundManager : MonoBehaviour
                 _audioSource.Stop();
             }
 
-            _audioSource.volume = volume;
+            _audioSource.volume = volume * (soundOption.volume_BGM / 100);
             _audioSource.pitch = pitch;
             _audioSource.clip = audioClip;
             _audioSource.Play();
@@ -100,7 +113,7 @@ public class SoundManager : MonoBehaviour
         else
         {
             AudioSource _audioSource = m_audioSources[(int)SoundType.Effect];
-            _audioSource.volume = volume;
+            _audioSource.volume = volume * (soundOption.volume_Effect / 100);
             _audioSource.pitch = pitch;
             _audioSource.PlayOneShot(audioClip);
         }
@@ -111,7 +124,7 @@ public class SoundManager : MonoBehaviour
         if (!audioClip) return;
 
         audioSource.clip = audioClip;
-        audioSource.volume = volume;
+        audioSource.volume = volume * (soundOption.volume_Effect / 100);
         audioSource.pitch = pitch;
         audioSource.Play();
     }
@@ -151,5 +164,16 @@ public class SoundManager : MonoBehaviour
         }
 
         return _audioClip;
+    }
+
+    public void OnSoundValueChange()
+    {
+        onSoundValueChangeEvent?.Invoke();
+    }
+
+    private void ClearRegisteredEvents()
+    {
+        print("SoundManager's Event Cleared!");
+        onSoundValueChangeEvent = null;
     }
 }

@@ -65,11 +65,6 @@ public class Soldier : Enemy
     
     public override IEnumerator Attack()
     {
-        if (Physics.Raycast(transform.position, transform.forward, float.MaxValue, 1 << LayerMask.NameToLayer("Wall")))
-        {
-            yield break;
-        }
-        
         while (true)
         {
             GameObject _obj = SoundWaveManager.Instance.GenerateSoundWave(
@@ -81,10 +76,8 @@ public class Soldier : Enemy
             
             soundDistributor.SoundPlayer(soundGroups, "RiffleShot", 0);
             
-            if (Physics.Raycast(transform.position, transform.forward, out var _hit, float.MaxValue, LayerMask.GetMask("Player", "Interactable", "Wall")))
+            if (Physics.Raycast(transform.position, transform.forward, out var _hit, float.MaxValue, LayerMask.GetMask("Player", "Interactable")))
             {
-                if (_hit.transform.gameObject.layer == LayerMask.NameToLayer("Wall")) break;
-
                 IDamageable _damageable = _hit.transform.GetComponent<IDamageable>();
                 
                 if (_damageable is {IsDead: false})

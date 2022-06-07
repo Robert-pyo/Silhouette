@@ -119,11 +119,11 @@ public class EnemyAI : MonoBehaviour
         Vector3 _targetDir = _targetPosition - m_owner.transform.position;
         m_owner.targetDistance = _targetDir.sqrMagnitude;
 
-        if (Physics.Raycast(transform.position, _targetDir, float.MaxValue, 1 << LayerMask.NameToLayer("Wall")))
+        if (Physics.Raycast(transform.position, _targetDir, m_owner.Data.attackRange, 1 << LayerMask.NameToLayer("Wall")))
         {
             return;
         }
-        
+
         float _attackRange = m_owner.Data.attackRange * m_owner.Data.attackRange;
         if (_attackRange > m_owner.targetDistance)
         {
