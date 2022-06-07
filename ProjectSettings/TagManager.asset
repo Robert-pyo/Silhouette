@@ -3,7 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - PushOrPull
+  - CameraDirection
+  - Wire
+  - VisionWard
+  - EnemySound
+  - PlayerSound
+  - VisionSound
+  - VCam
+  - AudioRoot
   layers:
   - Default
   - TransparentFX
@@ -11,14 +21,14 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - Interactable
+  - BackfaceWall
+  - SoundWave
+  - Player
+  - SoundVisualizer
+  - Wire
+  - ChapterInfo
   - 
   - 
   - 
