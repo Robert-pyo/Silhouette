@@ -10,7 +10,7 @@ public class LevelInfoUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Invoke(nameof(Init), 0.3f);
+        Invoke(nameof(Init), 0.5f);
         
         GameManager.Instance.onProgressUpdateEvent += UpdateLevelProgress;
     }
