@@ -74,10 +74,10 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 Assets/GFX/LowPolySoldiers_demo/
-Assets/GFX/Low poly Space Rocks/
+Assets/GFX/Environments/Low poly Space Rocks/
 Assets/GFX/SciFi Warehouse Kit/
 Assets/Shaders/QuickOutline/
-Assets/Ultimate 10 Plus Shaders/
+Assets/Shaders/Ultimate 10 Plus Shaders/
 Assets/Plugins/FlatKit/
 Assets/Plugins/Modern UI Pack/
 Assets/Plugins/Realistic Hail Set/
