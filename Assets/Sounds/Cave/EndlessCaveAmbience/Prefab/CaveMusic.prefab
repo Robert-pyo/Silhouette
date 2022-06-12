@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 8240770}
-  type: 0
+  type: 1
 --- !u!1 &178104
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 8271678}
-  type: 0
+  type: 1
 --- !u!1 &184574
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 8242978}
-  type: 0
+  type: 1
 --- !u!1 &197210
 GameObject:
   m_ObjectHideFlags: 0
