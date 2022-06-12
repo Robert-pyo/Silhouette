@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/ThrowTest.meta
+guid: 99952d99703756247a98ab43c83338a4
+folderAsset: yes
+========
 guid: 54de7efa270337341acbd8e08999410b
+>>>>>>>> MapConfiguration_Interaction:Assets/Scenes/BlackAndWhite_Base.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

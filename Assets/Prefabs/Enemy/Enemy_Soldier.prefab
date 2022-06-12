@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5468780448435672277}
   m_Layer: 0
   m_Name: Enemy_Soldier
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentState: 0
   m_delayTimeIdleToPatrol: 2
-  m_waySelectNumber: 0
+  m_waySelectNumber: 1
 --- !u!136 &5468780448435672277
 CapsuleCollider:
   m_ObjectHideFlags: 0

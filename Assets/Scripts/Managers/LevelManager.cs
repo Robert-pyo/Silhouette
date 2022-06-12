@@ -52,11 +52,16 @@ public class LevelManager : MonoBehaviour
         }
         
         // 세이브 경로 지정
-        m_savePath = Path.Combine(Application.dataPath, "LevelData/Level.json");
+        m_savePath = Path.Combine(Application.persistentDataPath, "LevelData/Level.json");
 
         if (File.Exists(m_savePath))
         {
             LoadLevelData();
+        }
+        else
+        {
+            Directory.CreateDirectory(Path.Combine(Application.persistentDataPath, "LevelData/"));
+            SaveLevelData();
         }
 
         // 씬 바뀔 때 레벨 저장해주기(임시)
@@ -83,11 +88,6 @@ public class LevelManager : MonoBehaviour
         }
         
         //Debug.Log(currentLevel.level);
-    }
-
-    private void SyncLevelAudio()
-    {
-        
     }
 
     public void SaveLevelData()

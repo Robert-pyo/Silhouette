@@ -32,7 +32,7 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
     {
         m_outline = gameObject.AddComponent<Outline>();
 
-        m_outline.enabled = false;
+        m_outline.enabled = true;
         m_outline.OutlineMode = Outline.Mode.SilhouetteOnly;
         m_outline.OutlineColor = Color.cyan;
 
@@ -59,9 +59,8 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
 
         m_isActivated = true;
         StartCoroutine(nameof(GenerateVibration));
-        m_outline.enabled = true;
         
-        SoundManager.Instance.PlayAt(activateSound, m_audioSource);
+        SoundManager.Instance.PlayAt(activateSound, m_audioSource, 0.5f);
 
         GameManager.Instance.onVisionWardActivated -= ActivateVisionWard;
         GameManager.Instance.onVisionWardDeactivated += DeactivateVisionWard;
@@ -77,10 +76,10 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
         Destroy(m_linkedWire.gameObject);
         m_linkedWire = null;
         
-        SoundManager.Instance.PlayAt(deactivateSound, m_audioSource);
+        SoundManager.Instance.PlayAt(deactivateSound, m_audioSource, 0.5f);
         
         StopCoroutine(nameof(GenerateVibration));
-        m_outline.enabled = false;
+        
         GameManager.Instance.onVisionWardDeactivated -= DeactivateVisionWard;
         GameManager.Instance.onVisionWardActivated += ActivateVisionWard;
         GameManager.Instance.Player.addWireToWardEvent += AddWireToWard;

@@ -47,12 +47,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f4236b2c0794694a3d1c201e84aebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playOnAwake: 0
+  playOnStart: 0
+  randomiseStartPosition: 1
   bed: {fileID: 8229636}
   melody: {fileID: 8271678}
   perc: {fileID: 8240770}
   fx: {fileID: 8242978}
   mixer: {fileID: 24100000, guid: 6442bf2b5d5734a63bbfbb21945c24d6, type: 2}
+  exposedParamName: CaveMasterVol
   fadeInDuration: 3
   fadeOutDuration: 3
   melodyArray:
@@ -80,7 +82,6 @@ MonoBehaviour:
   percChance: 40
   fxChance: 20
   panVariation: 0.4
-  randomiseStartPosition: 1
 --- !u!1 &173542
 GameObject:
   m_ObjectHideFlags: 0
@@ -91,6 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 473660}
   - component: {fileID: 8240770}
+  - component: {fileID: 5667052309995654541}
   m_Layer: 0
   m_Name: Perc
   m_TagString: Untagged
@@ -121,8 +123,7 @@ AudioSource:
   m_GameObject: {fileID: 173542}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -5985908981893118219, guid: 6442bf2b5d5734a63bbfbb21945c24d6,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: -5985908981893118219, guid: 6442bf2b5d5734a63bbfbb21945c24d6, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -209,6 +210,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5667052309995654541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79972b36b59de8545bad94e4a0a5ddc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 8240770}
+  type: 0
 --- !u!1 &178104
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 410568}
   - component: {fileID: 8271678}
+  - component: {fileID: 626738674573594920}
   m_Layer: 0
   m_Name: Melody
   m_TagString: Untagged
@@ -249,8 +265,7 @@ AudioSource:
   m_GameObject: {fileID: 178104}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -6334447146935396736, guid: 6442bf2b5d5734a63bbfbb21945c24d6,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: -6334447146935396736, guid: 6442bf2b5d5734a63bbfbb21945c24d6, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -337,6 +352,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &626738674573594920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79972b36b59de8545bad94e4a0a5ddc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 8271678}
+  type: 0
 --- !u!1 &184574
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,6 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 429284}
   - component: {fileID: 8242978}
+  - component: {fileID: 7497308109306440248}
   m_Layer: 0
   m_Name: Fx
   m_TagString: Untagged
@@ -377,8 +407,7 @@ AudioSource:
   m_GameObject: {fileID: 184574}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -6096853301159115964, guid: 6442bf2b5d5734a63bbfbb21945c24d6,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: -6096853301159115964, guid: 6442bf2b5d5734a63bbfbb21945c24d6, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -465,6 +494,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7497308109306440248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79972b36b59de8545bad94e4a0a5ddc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 8242978}
+  type: 0
 --- !u!1 &197210
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,6 +518,7 @@ GameObject:
   m_Component:
   - component: {fileID: 477432}
   - component: {fileID: 8229636}
+  - component: {fileID: 8716397257001353469}
   m_Layer: 0
   m_Name: Bed
   m_TagString: Untagged
@@ -505,8 +549,7 @@ AudioSource:
   m_GameObject: {fileID: 197210}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24349940, guid: 6442bf2b5d5734a63bbfbb21945c24d6,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: 24349940, guid: 6442bf2b5d5734a63bbfbb21945c24d6, type: 2}
   m_audioClip: {fileID: 8300000, guid: 2e19cb06cccd742b59d90e29abfe533b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -593,3 +636,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8716397257001353469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79972b36b59de8545bad94e4a0a5ddc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 8229636}
+  type: 0

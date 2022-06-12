@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Audio;
 
@@ -80,7 +80,7 @@ public class RandomMusic : MonoBehaviour
             {
                 bed.time = Random.Range(0, bed.clip.length);
             }
-            bed.Play();
+            SoundManager.Instance.Play(bed.clip, SoundType.Bgm);
             musicPlaying = true;
         }
         else { Debug.Log("Cannot start music, it's still playing."); }
@@ -103,7 +103,7 @@ public class RandomMusic : MonoBehaviour
             int melodyIndex = Random.Range(0, melodyArray.Length);
             melody.panStereo = RandomPan();
             melody.clip = melodyArray[melodyIndex];
-            melody.Play();
+            SoundManager.Instance.PlayAt(melody.clip, melody);
         }
 
         if (percChance > percRoll && !perc.isPlaying)
@@ -111,7 +111,7 @@ public class RandomMusic : MonoBehaviour
             int percIndex = Random.Range(0, percArray.Length);
             perc.panStereo = RandomPan();
             perc.clip = percArray[percIndex];
-            perc.Play();
+            SoundManager.Instance.PlayAt(perc.clip, perc);
         }
 
         if (fxChance > fxRoll && !fx.isPlaying)
@@ -119,7 +119,7 @@ public class RandomMusic : MonoBehaviour
             int fxIndex = Random.Range(0, fxArray.Length);
             fx.panStereo = RandomPan();
             fx.clip = fxArray[fxIndex];
-            fx.Play();
+            SoundManager.Instance.PlayAt(fx.clip, fx);
         }
     }
 

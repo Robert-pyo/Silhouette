@@ -65,6 +65,7 @@ namespace Player
         public EInteractionType interactionType;
         public bool isInteractable;
         public GameObject targetObj;
+        private Transform m_lastTargeted;
         public Transform detectOrigin;
         public float detectDistance;
         private Obstacles m_interactionObstacle;
@@ -266,9 +267,11 @@ namespace Player
             {
                 m_playerAnim.SetBool(OnPushAction, false);
                 m_playerSM.ChangeState(EPlayerState.Idle);
+                return;
             }
             
             PushAndPull();
+            m_lastTargeted = targetObj.transform;
 
             if (!m_input.InteractionInput) return;
             m_playerAnim.SetBool(OnPushAction, false);
@@ -278,7 +281,8 @@ namespace Player
         private void PushAndPull_Exit()
         {
             isActing = false;
-            targetObj.transform.parent = null;
+            print("Exit Push and Pull");
+            m_lastTargeted.parent = null;
         }
 
         private void ThrowSomething_Update()
@@ -404,12 +408,14 @@ namespace Player
 
         private void PushAndPull()
         {
-            var _moveDir = Vector3.forward * m_input.VInput;
+            var _moveDir = Vector3.forward * m_input.VInput * (moveSpeed * walkSpeedReduction);
 
             //targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
             //Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
+
+            transform.Translate(_moveDir * Time.deltaTime);
             targetObj.transform.parent = transform;
+
             m_playerAnim.SetFloat(Velocity, moveSpeed * m_input.VInput);
         }
 

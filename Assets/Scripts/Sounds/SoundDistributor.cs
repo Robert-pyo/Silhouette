@@ -22,7 +22,12 @@ public class SoundDistributor : MonoBehaviour
             AudioSource _addedSource = _soundGroupObj.AddComponent<AudioSource>();
             _addedSource.spatialBlend = 1;
             _addedSource.transform.parent = transform;
-            
+
+            SoundSynchronizer _soundSync = _soundGroupObj.AddComponent<SoundSynchronizer>();
+
+            _soundSync.type = SoundType.Effect;
+            _soundSync.source = _addedSource;
+
             audioSourceDic.Add(_groupName, _addedSource);
         }
     }
