@@ -72,3 +72,16 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+Assets/GFX/LowPolySoldiers_demo/
+Assets/GFX/Environments/Low poly Space Rocks/
+Assets/GFX/SciFi Warehouse Kit/
+Assets/Shaders/QuickOutline/
+Assets/Shaders/Ultimate 10 Plus Shaders/
+Assets/Plugins/FlatKit/
+Assets/Plugins/Modern UI Pack/
+Assets/Plugins/Realistic Hail Set/
+Assets/Plugins/Simple Scroll-Snap/
+Assets/Particles/Polygon Arsenal/
+Assets/Particles/PolygonParticleFX/
+Assets/Animations/Kevin Iglesias/
