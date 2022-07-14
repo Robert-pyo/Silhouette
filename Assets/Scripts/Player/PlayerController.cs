@@ -63,19 +63,22 @@ namespace Player
 
         [Header("Interaction Info")]
         public EInteractionType interactionType;
-        public bool isInteractable;
         public GameObject targetObj;
-        private Transform m_lastTargeted;
         public Transform detectOrigin;
+        public bool isInteractable;
         public float detectDistance;
-        private Obstacles m_interactionObstacle;
         private InteractDetectStrategy rayDetection;
+        private Transform m_lastTargeted;
+        private bool m_isOnInteract;
+
+        private Transform m_obstacleMoveTarget;
 
         [Header("For Link To Vision Ward")]
         public Wire wire;
         public List<Wire> wireInstances = new List<Wire>();
         public Transform wireTiedPosition;
-        private InteractionCommand m_activateVisionWard;
+
+        private InteractionCommand m_interactionCommand;
 
         [Header("Projection")]
         public Transform mouseCursor;
@@ -121,9 +124,6 @@ namespace Player
             //m_movement = new RayPlayerWalk(this);
             m_movement = new RigidbodyMovement(this);
             rayDetection = new RayDetector(this);
-
-            // Command
-            m_activateVisionWard = new VisionWardInteraction(this);
             
             // Sounds
             soundDistributor.soundGroupNames = new string[soundGroupList.Count];
@@ -140,30 +140,27 @@ namespace Player
             if (isDead) return;
             //Interaction
             isInteractable = rayDetection.CanInteract();
-            
+            if (!isInteractable && targetObj)
+            {
+                targetObj = null;
+            }
+
             if (isActing) return;
             Move();
 
             ReadyToThrow();
         }
 
-        private void LateUpdate()
-        {
-            if (isInteractable)
-            {
-                interactionPopUpEvent?.Invoke();
-            }
-            else
-            {
-                popUpReleaseEvent?.Invoke();
-            }
-        }
-
         #region States
         private void Idle_Update()
         {
-            if (isInteractable && m_input.InteractionInput)
+            m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
+
+            if (isInteractable)
             {
+                interactionPopUpEvent?.Invoke();
+                if (!m_input.InteractionInput) return;
+
                 switch (interactionType)
                 {
                     case EInteractionType.PushOrPull:
@@ -176,7 +173,6 @@ namespace Player
 
                     case EInteractionType.VisionWard:
                         {
-                            // TODO : 애니메이션 추가 필요
                             m_playerSM.ChangeState(EPlayerState.OnActivateWard);
                         }
                         break;
@@ -186,6 +182,10 @@ namespace Player
                         break;
                 }
             }
+            else
+            {
+                popUpReleaseEvent?.Invoke();
+            }
 
             if (m_input.CrouchInput)
             {
@@ -193,7 +193,6 @@ namespace Player
                 m_playerSM.ChangeState(EPlayerState.Crouch);
             }
 
-            //if (Agent.velocity.sqrMagnitude < 0.01f) return;
             if (m_rigidbody.velocity.sqrMagnitude < 0.01f) return;
             
             m_playerSM.ChangeState(EPlayerState.Run);
@@ -256,13 +255,23 @@ namespace Player
 
         private void PushAndPull_Enter()
         {
-            //Agent.isStopped = true;
-            //Agent.ResetPath();
             isActing = true;
+            m_isOnInteract = true;
+            popUpReleaseEvent?.Invoke();
+
+            m_interactionCommand = new PushInteraction(this, m_obstacleMoveTarget);
+            m_interactionCommand.Execute();
         }
 
         private void PushAndPull_Update()
         {
+            if (!m_isOnInteract)
+            {
+                m_playerAnim.SetBool(OnPushAction, false);
+                m_playerSM.ChangeState(EPlayerState.Idle);
+                return;
+            }
+
             if (!isInteractable)
             {
                 m_playerAnim.SetBool(OnPushAction, false);
@@ -274,15 +283,14 @@ namespace Player
             m_lastTargeted = targetObj.transform;
 
             if (!m_input.InteractionInput) return;
-            m_playerAnim.SetBool(OnPushAction, false);
-            m_playerSM.ChangeState(EPlayerState.Idle);
+            m_isOnInteract = false;
         }
 
         private void PushAndPull_Exit()
         {
             isActing = false;
             print("Exit Push and Pull");
-            m_lastTargeted.parent = null;
+            transform.parent = null;
         }
 
         private void ThrowSomething_Update()
@@ -304,7 +312,8 @@ namespace Player
             m_playerAnim.SetTrigger(OnActivateWard);
 
             targetObj.GetComponent<VibrationGenerator>().StateToggle();
-            m_activateVisionWard.Execute();
+            m_interactionCommand = new VisionWardInteraction(this);
+            m_interactionCommand.Execute();
         }
         private void OnActivateWard_Update()
         {
@@ -366,9 +375,10 @@ namespace Player
             var _mouseDir = mouseCursor.position - transform.position;
             m_projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * throwForce + transform.up * throwForce;
             projection.SimulateTrajectory(rockPrefab, startThrowPos.position, m_projectileDir);
-            
+            Debug.DrawRay(startThrowPos.position, m_projectileDir * float.MaxValue, Color.red);
+
             m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
-            
+
             if (!m_input.ThrowInput) return;
             isReadyToThrow = false;
             projection.lineRenderer.enabled = false;
@@ -383,7 +393,6 @@ namespace Player
         public void BlockInputToggle()
         {
             isActing = !isActing;
-            //Agent.isStopped = !Agent.isStopped;
         }
 
         private int m_stepCount = 0;
@@ -408,13 +417,10 @@ namespace Player
 
         private void PushAndPull()
         {
-            var _moveDir = Vector3.forward * m_input.VInput * (moveSpeed * walkSpeedReduction);
+            var _moveDir = transform.forward * m_input.VInput * (moveSpeed * walkSpeedReduction);
 
-            //targetObj.transform.Translate(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-            //Agent.Move(_moveDir * (moveSpeed * walkSpeedReduction * Time.deltaTime));
-
-            transform.Translate(_moveDir * Time.deltaTime);
-            targetObj.transform.parent = transform;
+            targetObj.transform.Translate(_moveDir * Time.deltaTime);
+            transform.parent = targetObj.transform;
 
             m_playerAnim.SetFloat(Velocity, moveSpeed * m_input.VInput);
         }
@@ -446,6 +452,14 @@ namespace Player
             m_rigidbody.isKinematic = true;
             enabled = false;
             onDeadEvent?.Invoke();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("PushOrPull"))
+            {
+                m_obstacleMoveTarget = other.transform;
+            }
         }
     }
 }

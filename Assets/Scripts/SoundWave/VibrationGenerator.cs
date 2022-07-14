@@ -49,7 +49,7 @@ public class VibrationGenerator : MonoBehaviour, IDamageable
     private void Init()
     {
         if (!GameManager.Instance.Player) return;
-        print("Init");
+        //print("Init");
         GameManager.Instance.Player.addWireToWardEvent += AddWireToWard;
     }
 
