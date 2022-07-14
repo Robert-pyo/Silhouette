@@ -23,6 +23,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
     public short CurHp => m_curHp;
     public bool IsDead => isDead;
 
+    public float viewRadius;
+    [Range(0, 360)]public float viewAngle;
+    public LayerMask targetMask;
+    public LayerMask obstacleMask;
+    protected TargetFinder fovTargetFinder;
+
     [SerializeField] private float m_moveSpeed;
     [SerializeField] private float m_rotateSpeed;
     public float MoveSpeed => m_moveSpeed;
@@ -30,12 +36,12 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
     
     protected NavMeshAgent m_agent;
     public NavMeshAgent Agent => m_agent;
-    protected EnemyMovement m_movementCommand;
+    protected EnemyMovement m_movement;
     public WaypointSelector waypointSelector;
 
     [Header("TargetInfo")]
     public Transform target;
-    public float targetDistance;
+    public float sqrTargetDistance;
     protected TargetFinder m_targetFinder;
 
     [Header("Sound Wave")]
@@ -58,11 +64,20 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
 
     public abstract void UpdateAnimation();
 
+    // Events
+    public event Action<bool> OnBeCarefulEvent;
+
     public IEnumerator FindTarget()
     {
         while (true)
         {
             target = m_targetFinder.FindTarget();
+
+            if (!target)
+            {
+                target = fovTargetFinder.FindTarget();
+            }
+
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -100,7 +115,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
             if (!_obj) return;
             _obj.transform.GetChild(0).tag = "EnemySound";
 
-            float _volume = m_moveSpeed / SoundWaveManager.Instance.maxPower;
+            float _volume = (m_moveSpeed * 2f) / SoundWaveManager.Instance.maxPower;
             
             soundDistributor.SoundPlayer(soundGroups, "Footstep", m_stepCount, _volume);
             SoundGroup _group = soundGroups.Find(group => group.groupName == "Footstep");
@@ -116,8 +131,35 @@ public abstract class Enemy : MonoBehaviour, IDamageable, IWalkable
         _obj.transform.GetChild(0).tag = "EnemySound";
     }
 
+    public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
+    {
+        if (!angleIsGlobal)
+        {
+            angleInDegrees += transform.eulerAngles.y;
+        }
+
+        float _radian = angleInDegrees * Mathf.Deg2Rad;
+        return new Vector3(Mathf.Sin(_radian), 0, Mathf.Cos(_radian));
+    }
+
     public void OnDrawGizmos()
     {
-        Gizmos.DrawSphere(transform.position, Data.recognizeRange);
+        Gizmos.DrawWireSphere(transform.position, Data.recognizeRange);
+
+        Vector3 _rightDir = DirFromAngle(viewAngle * 0.5f, false);
+        Vector3 _leftDir = DirFromAngle(-viewAngle * 0.5f, false);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + _leftDir * viewRadius);
+        Gizmos.DrawLine(transform.position, transform.position + _rightDir * viewRadius);
+
+        Gizmos.color = Color.green;
+        if (target)
+        {
+            Gizmos.DrawLine(transform.position, target.transform.position);
+            //float _targetDist = (target.transform.position - transform.position).magnitude;
+
+            //if (_targetDist > viewRadius) return;
+        }
     }
 }

@@ -48,8 +48,8 @@ MonoBehaviour:
   segmentStart: {fileID: 0}
   segmentEnd: {fileID: 0}
   m_segmentList: []
-  segmentPrefab: {fileID: 3490059521536546173, guid: 84675f7ac0c148d439699f0496fca8b3, type: 3}
-  m_segmentCount: 30
+  segmentPrefab: {fileID: 129496770381176510, guid: 84675f7ac0c148d439699f0496fca8b3, type: 3}
+  m_segmentCount: 50
 --- !u!120 &5230857940713552151
 LineRenderer:
   m_ObjectHideFlags: 0

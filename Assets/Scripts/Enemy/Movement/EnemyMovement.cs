@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class EnemyMovement
 {
+    protected Enemy owner;
     protected float moveSpeed;
     protected float rotateSpeed;
     

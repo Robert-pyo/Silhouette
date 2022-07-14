@@ -7,12 +7,11 @@ using UnityEngine.Tilemaps;
 
 public class Soldier : Enemy
 {
-    private EnemyAI m_ai;
-
     [Header("Attack Info")]
     [SerializeField] private Transform m_attackPos;
-
     [SerializeField] private GameObject m_attackFx;
+    
+    private EnemyAI m_ai;
 
     private WaitForSeconds m_attackWaitTime;
 
@@ -38,9 +37,9 @@ public class Soldier : Enemy
         
         m_ai = GetComponent<EnemyAI>();
 
-        // 커맨드
-        m_movementCommand = new NavMovement(m_agent, MoveSpeed, RotateSpeed);
+        m_movement = new NavMovement(this, m_agent, MoveSpeed, RotateSpeed);
         m_targetFinder = new SoundFirstPriorityTargetFinder(this);
+        fovTargetFinder = new SightTargetFinder(this);
 
         // 아웃라인
         m_outline = gameObject.AddComponent<Outline>();
@@ -60,7 +59,7 @@ public class Soldier : Enemy
 
     public override void Move(Vector3 dest)
     {
-        m_movementCommand.Execute(dest);
+        m_movement.Execute(dest);
     }
     
     public override IEnumerator Attack()
@@ -101,7 +100,7 @@ public class Soldier : Enemy
                 break;
             case EEnemyState.Trace:
                 break;
-            case EEnemyState.Sneak:
+            case EEnemyState.Careful:
                 break;
             case EEnemyState.Attack:
                 m_enemyAnim.SetBool(OnAttack, true);

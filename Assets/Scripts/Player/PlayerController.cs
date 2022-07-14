@@ -407,7 +407,7 @@ namespace Player
                 if (!_obj) return;
                 _obj.transform.GetChild(0).tag = "PlayerSound";
                 
-                float _volume = moveSpeed / SoundWaveManager.Instance.maxPower;
+                float _volume = (moveSpeed * 0.4f) / SoundWaveManager.Instance.maxPower;
 
                 SoundGroup _group = soundGroupList.Find(group => group.groupName == "Footstep");
                 soundDistributor.SoundPlayer(soundGroupList, "Footstep", m_stepCount, _volume);

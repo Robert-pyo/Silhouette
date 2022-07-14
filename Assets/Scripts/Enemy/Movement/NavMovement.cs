@@ -1,19 +1,29 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class NavMovement : EnemyMovement
 {
     private NavMeshAgent m_agent;
+    private bool m_isStopped = false;
 
-    public NavMovement(NavMeshAgent agent, float moveSpeed, float rotateSpeed)
+    // Properties
+    public bool IsStopped => m_isStopped;
+
+    public NavMovement(Enemy enemy, NavMeshAgent agent, float moveSpeed, float rotateSpeed)
     {
+        owner = enemy;
         this.moveSpeed = moveSpeed;
         this.rotateSpeed = rotateSpeed;
         m_agent = agent;
+
+        owner.OnBeCarefulEvent += StopMovement;
     }
 
     public override void Execute(Vector3 dest)
     {
+        if (m_isStopped) return;
+
         NavAgentMove(dest);
     }
 
@@ -30,5 +40,11 @@ public class NavMovement : EnemyMovement
 
         m_agent.transform.rotation = Quaternion.Slerp(
             m_agent.transform.rotation, Quaternion.LookRotation(_lookRotation), rotateSpeed * Time.deltaTime);
+    }
+
+    private void StopMovement(bool condition)
+    {
+        m_isStopped = condition;
+        m_agent.isStopped = condition;
     }
 }

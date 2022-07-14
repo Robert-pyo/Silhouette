@@ -4,5 +4,7 @@ using UnityEngine;
 
 public abstract class TargetFinder
 {
+    protected Enemy owner;
+
     public abstract Transform FindTarget();
 }

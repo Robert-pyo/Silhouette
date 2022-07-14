@@ -10,7 +10,7 @@ public enum EEnemyState
     Idle,
     Patrol,
     Trace,
-    Sneak,
+    Careful,
     Attack,
     Hit,
     Dead,
@@ -117,7 +117,7 @@ public class EnemyAI : MonoBehaviour
         if (!m_owner.target.CompareTag("Player") && !m_owner.target.CompareTag("VisionWard")) return;
 
         Vector3 _targetDir = _targetPosition - m_owner.transform.position;
-        m_owner.targetDistance = _targetDir.sqrMagnitude;
+        m_owner.sqrTargetDistance = _targetDir.sqrMagnitude;
 
         if (Physics.Raycast(transform.position, _targetDir, m_owner.Data.attackRange, 1 << LayerMask.NameToLayer("Wall")))
         {
@@ -125,7 +125,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         float _attackRange = m_owner.Data.attackRange * m_owner.Data.attackRange;
-        if (_attackRange > m_owner.targetDistance)
+        if (_attackRange > m_owner.sqrTargetDistance)
         {
             m_enemyState.ChangeState(EEnemyState.Attack);
         }
@@ -179,5 +179,10 @@ public class EnemyAI : MonoBehaviour
         {
             print($"{name} is Dead");
         }
+    }
+
+    private void Careful_Enter()
+    {
+
     }
 }

@@ -1,14 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundFirstPriorityTargetFinder : TargetFinder
 {
-    private Enemy m_enemy;
-
     private Collider[] m_colliders;
     private int m_collideCount;
-    private SoundWaveFx m_soundFx;
+
+    private Stack<Transform> m_targetedObjStack;
+    private const byte MAX_STACK_COUNT = 20;
+    private SoundWaveFx m_targetSoundFx;
 
     private Transform m_lastDetectedTarget;
 
@@ -16,8 +18,10 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
 
     public SoundFirstPriorityTargetFinder(Enemy enemy)
     {
-        m_enemy = enemy;
+        this.owner = enemy;
         m_colliders = new Collider[20];
+
+        m_targetedObjStack = new Stack<Transform>();
     }
     
     public override Transform FindTarget()
@@ -25,7 +29,6 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
         if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
         {
             m_playerDetectedTime += Time.deltaTime;
-            Debug.Log(m_playerDetectedTime);
 
             if (m_playerDetectedTime < 0.3f)
             {
@@ -37,7 +40,7 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
         }
 
         // OverlapSphere 사용하여 구형의 감지 범위 생성
-        m_collideCount = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.recognizeRange,
+        m_collideCount = Physics.OverlapSphereNonAlloc(owner.transform.position, owner.Data.recognizeRange,
             m_colliders, LayerMask.GetMask("SoundVisualizer"));
 
         Transform _target = null;
@@ -52,7 +55,6 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             if (m_colliders[i].CompareTag("PlayerSound"))
             {
                 _target = m_colliders[i].transform;
-                m_lastDetectedTarget = _target;
                 break;
             }
 
@@ -60,50 +62,54 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             if (m_colliders[i].CompareTag("VisionSound"))
             {
                 _target = m_colliders[i].transform.root;
-                m_lastDetectedTarget = _target;
                 break;
             }
             
             // 위에서 걸러지지 않았다면
             _target = m_colliders[i].transform;
-            m_lastDetectedTarget = _target;
             break;
         }
-        
-        //if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
-        //{
-        //    Collider[] _results = new Collider[1];
-        //    int _count = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.recognizeRange, _results, LayerMask.GetMask("Player"));
 
-        //    if (_count > 0)
-        //    {
-        //        _target = _results[0].transform;
-        //        m_lastDetectedTarget = _target;
-        //    }
-        //}
+        if (!_target || _target.CompareTag("VisionWard")) return _target;
+        m_targetSoundFx = _target.parent.GetComponent<SoundWaveFx>();
 
-        if (!_target || _target.CompareTag("VisionWard") || _target.CompareTag("Player")) return _target;
-        m_soundFx = _target.parent.GetComponent<SoundWaveFx>();
+        // 감지된 소리가 너무 작다면
+        if (m_targetSoundFx.soundVelocity < 5f)
+        {
+            return null;
+        }
 
-        if (_target && _target.CompareTag("PlayerSound"))
+        if (_target.CompareTag("PlayerSound"))
         {
             Collider[] _results = new Collider[1];
-            int _count = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.recognizeRange, _results, LayerMask.GetMask("Player"));
+            int _count = Physics.OverlapSphereNonAlloc(owner.transform.position, owner.Data.recognizeRange, _results, LayerMask.GetMask("Player"));
 
             if (_count > 0)
             {
                 _target = _results[0].transform;
-                m_lastDetectedTarget = _target;
             }
         }
 
-        // 감지된 소리가 너무 작다면 null 반환
-        if (m_soundFx.soundVelocity < 5f)
+        // 중복 허용 안함
+        if (_target != m_lastDetectedTarget)
         {
-            m_lastDetectedTarget = null;
-            return null;
+            if (m_targetedObjStack.Count <= MAX_STACK_COUNT)
+            {
+                m_targetedObjStack.Push(_target != null ? _target : m_lastDetectedTarget);
+            }
         }
 
-        return _target;
+        // 목적지에 도착 했다면 스택에서 제거하기
+        if (!owner.Agent.hasPath || owner.Agent.velocity.sqrMagnitude < 0.1f)
+        {
+            if (m_targetedObjStack.Count > 0)
+            {
+                m_targetedObjStack.Pop();
+            }
+        }
+
+        m_lastDetectedTarget = _target;
+
+        return m_targetedObjStack.Count > 0 ? m_targetedObjStack.Peek() : null;
     }
 }
