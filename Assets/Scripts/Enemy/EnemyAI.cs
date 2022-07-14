@@ -165,10 +165,6 @@ public class EnemyAI : MonoBehaviour
     {
         currentState = m_enemyState.State;
     }
-    private void Hit_Exit()
-    {
-
-    }
 
     private void Dead_Enter()
     {

@@ -22,7 +22,7 @@ public class SoundSynchronizer : MonoBehaviour
 
     public void SyncData()
     {
-        print("SyncSoundData");
+        //print("SyncSoundData");
         if (type == SoundType.Bgm)
         {
             source.volume = SoundManager.Instance.soundOption.volume_BGM / 100;

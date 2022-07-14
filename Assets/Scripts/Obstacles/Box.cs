@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class Box : Obstacles
 {
+    private Outline m_outline;
+
     private void Awake()
     {
-        obstacleType = EObstacleType.Climbable;
+        obstacleType = EObstacleType.Movable;
 
         m_obstacleRigidbody = GetComponent<Rigidbody>();
+
+        m_outline = gameObject.AddComponent<Outline>();
+
+        m_outline.OutlineMode = Outline.Mode.OutlineAndSilhouette;
+        m_outline.OutlineWidth = 2f;
     }
 
     //private void OnCollisionEnter(Collision collision)

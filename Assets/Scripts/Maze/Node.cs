@@ -10,6 +10,7 @@ public enum ENodeDirState
     None
 }
 
+[System.Serializable]
 public class Node
 {
     public static int s_UNodeID = 0;

@@ -12,6 +12,8 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
 
     private Transform m_lastDetectedTarget;
 
+    private float m_playerDetectedTime;
+
     public SoundFirstPriorityTargetFinder(Enemy enemy)
     {
         m_enemy = enemy;
@@ -20,6 +22,20 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
     
     public override Transform FindTarget()
     {
+        if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
+        {
+            m_playerDetectedTime += Time.deltaTime;
+            Debug.Log(m_playerDetectedTime);
+
+            if (m_playerDetectedTime < 0.3f)
+            {
+                return m_lastDetectedTarget;
+            }
+
+            m_lastDetectedTarget = null;
+            m_playerDetectedTime = 0;
+        }
+
         // OverlapSphere 사용하여 구형의 감지 범위 생성
         m_collideCount = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.recognizeRange,
             m_colliders, LayerMask.GetMask("SoundVisualizer"));
@@ -54,17 +70,17 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
             break;
         }
         
-        if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
-        {
-            Collider[] _results = new Collider[1];
-            int _count = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.attackRange, _results, LayerMask.GetMask("Player"));
+        //if (m_lastDetectedTarget && m_lastDetectedTarget.CompareTag("Player"))
+        //{
+        //    Collider[] _results = new Collider[1];
+        //    int _count = Physics.OverlapSphereNonAlloc(m_enemy.transform.position, m_enemy.Data.recognizeRange, _results, LayerMask.GetMask("Player"));
 
-            if (_count > 0)
-            {
-                _target = _results[0].transform;
-                m_lastDetectedTarget = _target;
-            }
-        }
+        //    if (_count > 0)
+        //    {
+        //        _target = _results[0].transform;
+        //        m_lastDetectedTarget = _target;
+        //    }
+        //}
 
         if (!_target || _target.CompareTag("VisionWard") || _target.CompareTag("Player")) return _target;
         m_soundFx = _target.parent.GetComponent<SoundWaveFx>();
@@ -82,6 +98,12 @@ public class SoundFirstPriorityTargetFinder : TargetFinder
         }
 
         // 감지된 소리가 너무 작다면 null 반환
-        return m_soundFx.soundVelocity < 3f ? null : _target;
+        if (m_soundFx.soundVelocity < 5f)
+        {
+            m_lastDetectedTarget = null;
+            return null;
+        }
+
+        return _target;
     }
 }
