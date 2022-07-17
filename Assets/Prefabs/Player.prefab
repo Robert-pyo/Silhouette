@@ -70,13 +70,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4362738545725029843}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.2, z: 0}
+  m_LocalRotation: {x: -0.5735764, y: 0, z: 0, w: 0.8191521}
+  m_LocalPosition: {x: 0.31399918, y: 1.805, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4362738547019599391}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -70, y: 0, z: 0}
 --- !u!1 &4362738546510127823
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,7 +101,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4362738546510127823}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0.3}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4362738547019599391}
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   maxMoveSpeed: 5
-  m_maxHp: 3
+  m_maxHp: 1
   m_curHp: 3
   walkSpeedReduction: 0.4
   crouchSpeedReduction: 0.7
@@ -239,9 +239,9 @@ MonoBehaviour:
   isReadyToThrow: 0
   isDead: 0
   interactionType: 0
-  isInteractable: 0
   targetObj: {fileID: 0}
   detectOrigin: {fileID: 4362738546656037733}
+  isInteractable: 0
   detectDistance: 2
   wire: {fileID: 5230857940713552150, guid: b61380fc4bf48ca4093ef718ca5dd747, type: 3}
   wireInstances: []
@@ -249,7 +249,7 @@ MonoBehaviour:
   mouseCursor: {fileID: 0}
   projection: {fileID: 4362738547019599387}
   rockPrefab: {fileID: 4785313128945938067, guid: 785047fb7ce7ed44b87da377996b6fe5, type: 3}
-  throwForce: 1
+  throwForce: 5
   startThrowPos: {fileID: 4362738545725029842}
   throwDelay: 5
   soundGroupList:

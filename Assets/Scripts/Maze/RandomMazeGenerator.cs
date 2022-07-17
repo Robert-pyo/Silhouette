@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using System.IO;
 using Michsky.UI.ModernUIPack;
 
 struct NodePoint
@@ -27,8 +26,6 @@ public class RandomMazeGenerator : MonoBehaviour
 
     [SerializeField] private GameObject m_floorPrefab;
     [SerializeField] private GameObject m_wallPrefab;
-    //[SerializeField] private GameObject m_rightWallPrefab;
-    //[SerializeField] private GameObject m_leftWallPrefab;
 
     private List<GameObject> m_wallList = new List<GameObject>();
 
@@ -286,7 +283,6 @@ public class RandomMazeGenerator : MonoBehaviour
         {
             for (int j = 0; j < m_width; ++j)
             {
-                // floor 생성
                 GameObject _obj = Instantiate(m_wallPrefab, new Vector3(j * GRID_X_OFFSET, 0f, i * GRID_Z_OFFSET), Quaternion.identity);
                 _obj.transform.parent = m_parentObject.transform;
 
@@ -303,7 +299,7 @@ public class RandomMazeGenerator : MonoBehaviour
         {
             case ENodeDirState.Up:
                 {
-                    print("Up");
+                    //print("Up");
                     Destroy(m_wallList[index].transform.Find("Forward").gameObject);
                     Destroy(m_wallList[index + m_width].transform.Find("Back").gameObject);
                     //Instantiate(m_floorPrefab, m_wallList[index].transform.position, Quaternion.identity);
@@ -311,7 +307,7 @@ public class RandomMazeGenerator : MonoBehaviour
                 break;
             case ENodeDirState.Down:
                 {
-                    print("Down");
+                    //print("Down");
                     Destroy(m_wallList[index].transform.Find("Back").gameObject);
                     Destroy(m_wallList[index - m_width].transform.Find("Forward").gameObject);
                     //Instantiate(m_floorPrefab, m_wallList[index].transform.position, Quaternion.identity);
@@ -319,7 +315,7 @@ public class RandomMazeGenerator : MonoBehaviour
                 break;
             case ENodeDirState.Left:
                 {
-                    print("Left");
+                    //print("Left");
                     Destroy(m_wallList[index].transform.Find("Left").gameObject);
                     Destroy(m_wallList[index - 1].transform.Find("Right").gameObject);
                     //Instantiate(m_floorPrefab, m_wallList[index].transform.position, Quaternion.identity);
@@ -327,14 +323,14 @@ public class RandomMazeGenerator : MonoBehaviour
                 break;
             case ENodeDirState.Right:
                 {
-                    print("Right");
+                    //print("Right");
                     Destroy(m_wallList[index].transform.Find("Right").gameObject);
                     Destroy(m_wallList[index + 1].transform.Find("Left").gameObject);
                     //Instantiate(m_floorPrefab, m_wallList[index].transform.position, Quaternion.identity);
                 }
                 break;
             case ENodeDirState.None:
-                print("None");
+                //print("None");
                 break;
             default:
                 break;

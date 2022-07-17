@@ -104,9 +104,11 @@ namespace Player
         private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
         private static readonly int OnPushAction = Animator.StringToHash("OnPushAction");
         private static readonly int OnPush = Animator.StringToHash("OnPush");
-        private static readonly int OnJump = Animator.StringToHash("OnJump");
         private static readonly int OnDead = Animator.StringToHash("OnDead");
         private static readonly int OnActivateWard = Animator.StringToHash("OnActivateWard");
+        private static readonly int IsReadyToThrow = Animator.StringToHash("IsReadyToThrow");
+        private static readonly int OnTurn = Animator.StringToHash("Turn");
+        private static readonly int OnTurnToThrow = Animator.StringToHash("OnTurnToThrow");
 
         private void Awake()
         {
@@ -293,10 +295,20 @@ namespace Player
             transform.parent = null;
         }
 
+        private void ThrowSomething_Enter()
+        {
+            isActing = true;
+            m_playerAnim.SetBool(IsReadyToThrow, true);
+            m_playerAnim.SetTrigger(OnTurnToThrow);
+        }
         private void ThrowSomething_Update()
         {
             if (!isReadyToThrow) return;
             ThrowSomething();
+        }
+        private void ThrowSomething_Exit()
+        {
+            isActing = false;
         }
 
         private void OnActivateWard_Enter()
@@ -372,16 +384,32 @@ namespace Player
 
         private void ThrowSomething()
         {
-            var _mouseDir = mouseCursor.position - transform.position;
-            m_projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) * throwForce + transform.up * throwForce;
+            var _mouseDir = mouseCursor.position - transform.localPosition;
+            m_projectileDir = new Vector3(_mouseDir.x, 0f, _mouseDir.z) + startThrowPos.forward * throwForce;
             projection.SimulateTrajectory(rockPrefab, startThrowPos.position, m_projectileDir);
             Debug.DrawRay(startThrowPos.position, m_projectileDir * float.MaxValue, Color.red);
 
-            m_playerAnim.SetFloat(Velocity, m_rigidbody.velocity.sqrMagnitude);
+            transform.localRotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_mouseDir.normalized), 2 * Time.deltaTime);
+
+            float _targetAngle = Mathf.Acos(Vector3.Dot(transform.forward, _mouseDir.normalized)) * Mathf.Rad2Deg;
+            bool _isRight = Vector3.Cross(transform.forward, _mouseDir.normalized).y > 0f ? true : false;
+            if (_targetAngle > 0.1f)
+            {
+                if (_isRight)
+                {
+                    m_playerAnim.SetFloat(OnTurn, _targetAngle);
+                }
+                else
+                {
+                    m_playerAnim.SetFloat(OnTurn, -_targetAngle);
+                }
+            }
 
             if (!m_input.ThrowInput) return;
             isReadyToThrow = false;
             projection.lineRenderer.enabled = false;
+
+            m_playerAnim.SetBool(IsReadyToThrow, false);
 
             var _spawned = Instantiate(rockPrefab, startThrowPos.position, Quaternion.identity);
             _spawned.Init(m_projectileDir, false);
