@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.0008027994, g: 0.00044138025, b: 0.0000684928, a: 1}
+  m_IndirectSpecularColor: {r: 0.0008027995, g: 0.00044138162, b: 0.00006849297, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1627577804643909271, guid: 08d2e2f80a48012458f80b269ae0a92c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1627577804643909272, guid: 08d2e2f80a48012458f80b269ae0a92c, type: 3}
       propertyPath: levelData
@@ -3272,29 +3272,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5725000371507048362, guid: b2452a5c2cd649a4db9eebcd16f7b155, type: 3}
   m_PrefabInstance: {fileID: 1526366514}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1579636637 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8821559068690018736, guid: ec74718390b15e940a418d15e65e9ccc, type: 3}
-  m_PrefabInstance: {fileID: 414476394}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1579636641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579636637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 3
-  outlineColor: {r: 0.33333334, g: 1, b: 0.8509804, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1 &1650297084 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4504002612593752581, guid: accaed64289d4c744bfb36d84d565bc3, type: 3}

@@ -66,6 +66,7 @@ public class EnemyAI : MonoBehaviour
         if (m_delayTimeIdleToPatrol <= m_idleTimeTaken && m_owner.waypointSelector)
         {
             m_enemyState.ChangeState(EEnemyState.Patrol);
+            print("Patrol!");
             return;
         }
     }

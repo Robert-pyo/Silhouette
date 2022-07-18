@@ -8,20 +8,19 @@ public class WaypointSelector : MonoBehaviour
     public class EnemyPatrolWay
     {
         public List<Transform> waypoints;
+
+        public int currentIndex = -1;
     }
 
     public List<EnemyPatrolWay> ways = new List<EnemyPatrolWay>();
-    
-    private int m_index = -1;
-    public int Index => m_index;
 
     public Transform MoveNext(int selectWayNumber)
     {
         if (!PathVerifier()) return null;
 
-        m_index = (m_index + 1) % ways[selectWayNumber].waypoints.Count;
+        ways[selectWayNumber].currentIndex = (ways[selectWayNumber].currentIndex + 1) % ways[selectWayNumber].waypoints.Count;
 
-        return ways[selectWayNumber].waypoints[m_index];
+        return ways[selectWayNumber].waypoints[ways[selectWayNumber].currentIndex];
     }
 
     // public Transform MoveNext()
@@ -48,9 +47,9 @@ public class WaypointSelector : MonoBehaviour
             return null;
         }
 
-        m_index = index;
+        ways[selectWayNumber].currentIndex = index;
         
-        return ways[selectWayNumber].waypoints[m_index];
+        return ways[selectWayNumber].waypoints[ways[selectWayNumber].currentIndex];
     }
 
     private bool PathVerifier()
