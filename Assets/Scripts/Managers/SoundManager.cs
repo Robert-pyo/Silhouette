@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum SoundType
+public enum ESoundType
 {
     Bgm,
     Effect,
@@ -25,7 +25,7 @@ public class SoundManager : MonoBehaviour
 
     public SoundOptionData soundOption;
     
-    private AudioSource[] m_audioSources = new AudioSource[(int)SoundType.MaxCount];
+    private AudioSource[] m_audioSources = new AudioSource[(int)ESoundType.MaxCount];
     private Dictionary<string, AudioClip> m_audioClips = new Dictionary<string, AudioClip>();
 
     public UnityAction onSoundValueChangeEvent;
@@ -62,7 +62,7 @@ public class SoundManager : MonoBehaviour
         _root.tag = "AudioRoot";
         DontDestroyOnLoad(_root);
 
-        string[] _soundNames = Enum.GetNames(typeof(SoundType));
+        string[] _soundNames = Enum.GetNames(typeof(ESoundType));
         for (int i = 0; i < _soundNames.Length - 1; ++i)
         {
             GameObject _sounds = new GameObject { name = _soundNames[i] };
@@ -70,14 +70,14 @@ public class SoundManager : MonoBehaviour
             m_audioSources[i] = _sounds.AddComponent<AudioSource>();
             SoundSynchronizer _soundSync = _sounds.AddComponent<SoundSynchronizer>();
 
-            _soundSync.type = _soundNames[i] == "Bgm" ? SoundType.Bgm : SoundType.Effect;
+            _soundSync.type = _soundNames[i] == "Bgm" ? ESoundType.Bgm : ESoundType.Effect;
             _soundSync.source = m_audioSources[i];
 
             _sounds.transform.parent = _root.transform;
         }
 
         // 배경음악은 무한 반복
-        m_audioSources[(int)SoundType.Bgm].loop = true;
+        m_audioSources[(int)ESoundType.Bgm].loop = true;
     }
 
     public void Clear()
@@ -93,13 +93,13 @@ public class SoundManager : MonoBehaviour
         m_audioClips.Clear();
     }
 
-    public void Play(AudioClip audioClip, SoundType type = SoundType.Effect, float volume = 1.0f, float pitch = 1.0f)
+    public void Play(AudioClip audioClip, ESoundType type = ESoundType.Effect, float volume = 1.0f, float pitch = 1.0f)
     {
         if (!audioClip) return;
 
-        if (type == SoundType.Bgm)
+        if (type == ESoundType.Bgm)
         {
-            AudioSource _audioSource = m_audioSources[(int)SoundType.Bgm];
+            AudioSource _audioSource = m_audioSources[(int)ESoundType.Bgm];
             if (_audioSource.isPlaying)
             {
                 _audioSource.Stop();
@@ -112,7 +112,7 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
-            AudioSource _audioSource = m_audioSources[(int)SoundType.Effect];
+            AudioSource _audioSource = m_audioSources[(int)ESoundType.Effect];
             _audioSource.volume = volume * (soundOption.volume_Effect / 100);
             _audioSource.pitch = pitch;
             _audioSource.PlayOneShot(audioClip);
@@ -129,13 +129,13 @@ public class SoundManager : MonoBehaviour
         audioSource.Play();
     }
 
-    public void Play(string path, SoundType type = SoundType.Effect, float volume = 1f, float pitch = 1f)
+    public void Play(string path, ESoundType type = ESoundType.Effect, float volume = 1f, float pitch = 1f)
     {
         AudioClip _audioClip = GetOrAddAudioClip(path, type);
         Play(_audioClip, type, volume, pitch);
     }
 
-    private AudioClip GetOrAddAudioClip(string path, SoundType type = SoundType.Effect)
+    private AudioClip GetOrAddAudioClip(string path, ESoundType type = ESoundType.Effect)
     {
         if (!path.Contains("Sounds/"))
         {
@@ -144,7 +144,7 @@ public class SoundManager : MonoBehaviour
 
         AudioClip _audioClip = null;
 
-        if (type == SoundType.Bgm)
+        if (type == ESoundType.Bgm)
         {
             _audioClip = Resources.Load<AudioClip>(path);
         }

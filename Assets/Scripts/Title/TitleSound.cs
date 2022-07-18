@@ -10,7 +10,7 @@ public class TitleSound : MonoBehaviour
 
     private void Awake()
     {
-        SoundManager.Instance.Play(titleBgm, SoundType.Bgm, 0.5f, 0.85f);
+        SoundManager.Instance.Play(titleBgm, ESoundType.Bgm, 0.5f, 0.85f);
     }
 
     public void OnClickButton()

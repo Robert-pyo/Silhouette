@@ -6,7 +6,7 @@ using UnityEngine;
 public class SoundSynchronizer : MonoBehaviour
 {
     public AudioSource source;
-    public SoundType type;
+    public ESoundType type;
 
     private void Awake()
     {
@@ -23,7 +23,7 @@ public class SoundSynchronizer : MonoBehaviour
     public void SyncData()
     {
         //print("SyncSoundData");
-        if (type == SoundType.Bgm)
+        if (type == ESoundType.Bgm)
         {
             source.volume = SoundManager.Instance.soundOption.volume_BGM / 100;
         }

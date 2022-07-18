@@ -25,7 +25,7 @@ public class SoundDistributor : MonoBehaviour
 
             SoundSynchronizer _soundSync = _soundGroupObj.AddComponent<SoundSynchronizer>();
 
-            _soundSync.type = SoundType.Effect;
+            _soundSync.type = ESoundType.Effect;
             _soundSync.source = _addedSource;
 
             audioSourceDic.Add(_groupName, _addedSource);
