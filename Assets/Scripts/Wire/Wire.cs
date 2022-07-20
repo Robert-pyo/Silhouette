@@ -93,6 +93,7 @@ public class Wire : MonoBehaviour
 
                     m_segmentList.Insert(i + 1, _wireSegment);
                     _line.positionCount = m_segmentCount;
+                    _line.SetPosition(_line.positionCount - 1, m_segmentList[_line.positionCount - 1].transform.position);
                     break;
                 }
             }
